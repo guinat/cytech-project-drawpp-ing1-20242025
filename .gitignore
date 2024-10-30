@@ -1,0 +1,25 @@
+# Dossiers d'IDE
+.idea/
+.vscode/
+*.sublime*
+
+# Caches Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels
+venv/
+env/
+
+# Fichiers temporaires et de log
+*.log
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Autres fichiers spécifiques
+*.pdf  # Exclure les fichiers PDF comme SujetPython_GI_2024.pdf
