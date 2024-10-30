@@ -1,0 +1,37 @@
+# Fichiers et dossiers Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environnement virtuel
+venv/
+env/
+
+# Configuration de l’IDE
+.idea/          # PyCharm
+.vscode/        # Visual Studio Code
+*.sublime*      # Sublime Text
+*.code-workspace
+
+# Fichiers de log
+*.log
+
+# Fichiers de tests temporaires
+tests/*.log
+tests/__pycache__/
+tests/*.pyc
+
+# Caches et autres fichiers temporaires
+*.swp
+*.bak
+*.tmp
+
+# Autres fichiers spécifiques
+.DS_Store       # macOS
+Thumbs.db       # Windows
+
+# Fichiers spécifiques à votre projet
+/tests/__init__.py  # Exclure si généré automatiquement
+/contributors/*.txt # Exemple : exclure les fichiers de contributeurs temporaires
+*.pdf               # Si vous ne voulez pas suivre les fichiers PDF comme SujetPython_GI_2024.pdf
