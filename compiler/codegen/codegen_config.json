@@ -1,0 +1,25 @@
+{
+    "headers": [
+        "#include <stdio.h>",
+        "#include <stdlib.h>",
+        "#include <stdbool.h>"
+    ],
+    "types": {
+        "TokenType.INT": "int",
+        "TokenType.FLOAT": "float",
+        "TokenType.BOOL": "bool",
+        "TokenType.STRING": "char*"
+    },
+    "operators": {
+        "TokenType.PLUS": "+",
+        "TokenType.MINUS": "-",
+        "TokenType.MULTIPLY": "*",
+        "TokenType.DIVIDE": "/",
+        "TokenType.LT": "<",
+        "TokenType.GT": ">",
+        "TokenType.LTE": "<=",
+        "TokenType.GTE": ">=",
+        "TokenType.EQ": "==",
+        "TokenType.NEQ": "!="
+    }
+}
