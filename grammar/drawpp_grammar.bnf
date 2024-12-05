@@ -6,7 +6,7 @@
 # listing all possible statements - compiler will always read a statement as finishing with a semicolon
 
 <variable_declaration> ::= <const_keyword> <type> <identifier> "=" <expression>
-#declaring a variable with following statements : const/not const, type, name, '=', value. all of these parameters are mandatory for a correct declaration
+# declaring a variable with following statements : const/not const, type, name, '=', value. all of these parameters are mandatory for a correct declaration
 
 <const_keyword> ::= "const" | "var" # keyword for declaring consts/vars
 
@@ -16,7 +16,7 @@
 
 <compound_assignment> ::= <identifier> <compound_operator> <expression>   # affecting a value to an already declared variable, using operators ("+=", "-=", ...)
 
-<compound_operator> ::= "+=" | "-=" | "*=" | "/=" | "%="  # available affectation operators
+<compound_operator> ::= "+=" | "-=" | "*=" | "/="  # available affectation operators
 
 <if_statement> ::= "if" "(" <condition> ")" "{" <statement_list> "}" [ <elif_chain> ] [ "else" "{" <statement_list> "}" ] 
 # no semicolon needed until the end of the statement ! e.g. 'if(){};', 'if(){} elif(){} else{}';
@@ -40,39 +40,41 @@
 
 # presets
 #cursor
-<cursor_statement> ::= "cursor." ( <cursor_status> | <cursor_orientation> | <cursor_move> | <cursor_position> | <cursor_thickness> | <cursor_color> )
+<cursor_statement> ::= "cursor." ( <cursor_status> | <cursor_orientation> | <cursor_move> | <cursor_position> | <cursor_styles> )
 
-<cursor_status> ::= "status" "(" <expression> ")" ";" # sets the status, either currently drawing or not
+<cursor_status> ::= "status" "(" <expression> ")" # sets the status, either currently drawing or not
 
-<cursor_orientation> ::= "orientation" "(" <expression> ")" ";" # choose an angle (360°, follow trigonometric circle)
+<cursor_orientation> ::= "orientation" "(" <expression> ")" # choose an angle (360°, follow trigonometric circle)
 
-<cursor_move> ::= "move" "(" <expression> ")" ";" # moves from an amount of pixels based on the orientation
+<cursor_move> ::= "move" "(" <expression> ")" # moves from an amount of pixels based on the orientation
 
-<cursor_position> ::= "position" "(" <expression> "," <expression> ")" ";" # set a new position for the cursor : can draw between current position and inputed one if it's set as currently drawing
+<cursor_position> ::= "position" "(" <expression> "," <expression> ")" # set a new position for the cursor : can draw between current position and inputed one if it's set as currently drawing
 
-<cursor_thickness> ::= "styles.thickness" "(" <expression> ")" ";" # set a thickness
+<cursor_styles> ::= "styles." <cursor_thickness> | <cursor_color> # cursor styles
 
-<cursor_color> ::= "styles.color" "(" <color> ")" ";" # color presets
+<cursor_thickness> ::= "thickness" "(" <expression> ")" # set a thickness
+
+<cursor_color> ::= "color" "(" <color> ")" # color presets
 
 #background
 <background_statement> ::= "background." ( <background_color> | <background_path> )
 
-<background_color> ::= "color" "(" <color> ")" ";" # set a background color based on presets
+<background_color> ::= "color" "(" <color> ")" # set a background color based on presets
 
-<background_path> ::= "path" "(" <string> ")" ";" # set a file as a background image
+<background_path> ::= "path" "(" <string> ")" # set a file as a background image
 
 #presets
 <preset_statement> ::= "preset." ( <preset_square> | <preset_rectangle> | <preset_star> | <preset_circle> | <preset_triangle> )
 
-<preset_square> ::= "square" "(" <number> ")" ";"
+<preset_square> ::= "square" "(" <number> ")"
 
-<preset_rectangle> ::= "rectangle" "(" <number> "," <number> ")" ";" # length, width
+<preset_rectangle> ::= "rectangle" "(" <number> "," <number> ")" # length, width
 
-<preset_star> ::= "star" "(" <number> ")" ";"
+<preset_star> ::= "star" "(" <number> ")"
 
-<preset_circle> ::= "circle" "(" <number> "," <number> "," <number> ")" ";" # radius r, coords (x, y)
+<preset_circle> ::= "circle" "(" <number> "," <number> "," <number> ")" # radius r, coords (x, y)
 
-<preset_triangle> ::= "triangle" "(" <number> ")" ";" # equilateral triangles 
+<preset_triangle> ::= "triangle" "(" <number> ")" # equilateral triangles 
 
 
 # low level identifiers, operators...
