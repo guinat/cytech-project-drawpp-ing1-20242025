@@ -21,41 +21,41 @@ class Lexer:
         else:
             self.current_char = None
 
-    def skip_whitespace(self):
-        while self.current_char is not None and self.current_char.isspace():
-            self.advance()
-
-    def skip_comment(self):
-        # Commentaire sur une ligne
-        if self.current_char == '/' and self.peek() == '/':
-            self.advance()  # Passer le premier /
-            self.advance()  # Passer le deuxième /
-            while self.current_char is not None and self.current_char != '\n':
-                self.advance()
-            if self.current_char == '\n':
-                self.advance()
-            return True
-        # Commentaire multi-lignes
-        elif self.current_char == '/' and self.peek() == '*':
-            self.advance()  # Passer le /
-            self.advance()  # Passer le *
-            while self.current_char is not None:
-                if self.current_char == '*' and self.peek() == '/':
-                    self.advance()  # Passer le *
-                    self.advance()  # Passer le /
-                    return True
-                self.advance()
-            return True
-        return False
-
     def peek(self):
         peek_pos = self.position
         if peek_pos < len(self.source_code):
             return self.source_code[peek_pos]
         return None
 
+    def skip_whitespace(self):
+        while self.current_char is not None and self.current_char.isspace():
+            self.advance()
+
+    def skip_comment(self):
+        # Single-line comments
+        if self.current_char == '/' and self.peek() == '/':
+            self.advance()  # Skip first '/'
+            self.advance()  # Skip second '/'
+            while self.current_char is not None and self.current_char != '\n':
+                self.advance()
+            if self.current_char == '\n':
+                self.advance()
+            return True
+        # Multi-line comments
+        elif self.current_char == '/' and self.peek() == '*':
+            self.advance()  # Skip '/'
+            self.advance()  # Skip '*'
+            while self.current_char is not None:
+                if self.current_char == '*' and self.peek() == '/':
+                    self.advance()  # Skip '*'
+                    self.advance()  # Skip '/'
+                    return True
+                self.advance()
+            return True
+        return False
+
     def get_number(self):
-        result = ''
+        start_pos = self.position - 1
         decimal_point_count = 0
 
         while self.current_char is not None and (self.current_char.isdigit() or self.current_char == '.'):
@@ -63,34 +63,56 @@ class Lexer:
                 decimal_point_count += 1
                 if decimal_point_count > 1:
                     break
-            result += self.current_char
             self.advance()
 
-        if decimal_point_count == 0:
-            return Token(TokenType.NUMBER, int(result), self.line, self.column)
+        number = self.source_code[start_pos:self.position]
+        if '.' in number:
+            return Token(TokenType.NUMBER, float(number), self.line, self.column)
         else:
-            return Token(TokenType.NUMBER, float(result), self.line, self.column)
+            return Token(TokenType.NUMBER, int(number), self.line, self.column)
 
-    def get_identifier(self):
-        result = ''
-        while self.current_char is not None and (self.current_char.isalnum() or self.current_char == '_'):
-            result += self.current_char
+    def get_identifier_or_keyword(self):
+        start_pos = self.position - 1
+        while self.peek() and (self.peek().isalnum() or self.peek() == '_'):
+            self.advance()
+        identifier = self.source_code[start_pos:self.position]
+
+        keywords_with_dots = {
+            'cursor.',
+            'styles.',
+            'background.',
+            'preset.',
+        }
+
+        if identifier in keywords_with_dots:
+            identifier += self.source_code[self.position]
             self.advance()
 
         keywords = {
-            'int': TokenType.INT,
-            'float': TokenType.FLOAT,
-            'bool': TokenType.BOOL,
-            'string': TokenType.STRING,
+            'const': TokenType.CONST,
+            'var': TokenType.VAR,
             'if': TokenType.IF,
             'else': TokenType.ELSE,
-            'while': TokenType.WHILE
+            'elif': TokenType.ELIF,
+            'for': TokenType.FOR,
+            'while': TokenType.WHILE,
+            'int': TokenType.INT,
+            'float': TokenType.FLOAT,
+            'string': TokenType.STRING_TYPE,
+            'bool': TokenType.BOOL,
+            'cursor.': TokenType.CURSOR,
+            'styles.': TokenType.STYLES,
+            'background.': TokenType.BACKGROUND,
+            'preset.': TokenType.PRESET,
         }
 
-        token_type = keywords.get(result, TokenType.IDENTIFIER)
-        return Token(token_type, result, self.line, self.column)
+        if identifier in keywords:
+            return Token(keywords[identifier], identifier, self.line, self.column)
+        return Token(TokenType.IDENTIFIER, identifier, self.line, self.column)
 
-    def get_next_token(self):
+    def tokenize(self):
+        tokens = []
+
         while self.current_char is not None:
             if self.current_char.isspace():
                 self.skip_whitespace()
@@ -101,41 +123,14 @@ class Lexer:
                     continue
 
             if self.current_char.isdigit():
-                return self.get_number()
+                tokens.append(self.get_number())
+                continue
 
             if self.current_char.isalpha() or self.current_char == '_':
-                return self.get_identifier()
+                tokens.append(self.get_identifier_or_keyword())
+                continue
 
-            if self.current_char == '=':
-                self.advance()
-                if self.current_char == '=':
-                    self.advance()
-                    return Token(TokenType.EQ, '==', self.line, self.column)
-                return Token(TokenType.ASSIGN, '=', self.line, self.column)
-
-            if self.current_char == '<':
-                self.advance()
-                if self.current_char == '=':
-                    self.advance()
-                    return Token(TokenType.LTE, '<=', self.line, self.column)
-                return Token(TokenType.LT, '<', self.line, self.column)
-
-            if self.current_char == '>':
-                self.advance()
-                if self.current_char == '=':
-                    self.advance()
-                    return Token(TokenType.GTE, '>=', self.line, self.column)
-                return Token(TokenType.GT, '>', self.line, self.column)
-
-            if self.current_char == '!':
-                self.advance()
-                if self.current_char == '=':
-                    self.advance()
-                    return Token(TokenType.NEQ, '!=', self.line, self.column)
-                raise ValueError(f"Unexpected '!' at line {self.line}, column {self.column}")
-
-            # Single-character tokens
-            char_to_token = {
+            single_char_tokens = {
                 '+': TokenType.PLUS,
                 '-': TokenType.MINUS,
                 '*': TokenType.MULTIPLY,
@@ -145,23 +140,15 @@ class Lexer:
                 '{': TokenType.LBRACE,
                 '}': TokenType.RBRACE,
                 ';': TokenType.SEMICOLON,
-                ',': TokenType.COMMA
+                ',': TokenType.COMMA,
             }
 
-            if self.current_char in char_to_token:
-                char = self.current_char
+            if self.current_char in single_char_tokens:
+                tokens.append(Token(single_char_tokens[self.current_char], self.current_char, self.line, self.column))
                 self.advance()
-                return Token(char_to_token[char], char, self.line, self.column)
+                continue
 
-            raise ValueError(f"Invalid character '{self.current_char}' at line {self.line}, column {self.column}")
+            raise ValueError(f"Unexpected character '{self.current_char}' at line {self.line}, column {self.column}")
 
-        return Token(TokenType.EOF, None, self.line, self.column)
-
-    def tokenize(self):
-        tokens = []
-        while True:
-            token = self.get_next_token()
-            tokens.append(token)
-            if token.type == TokenType.EOF:
-                break
+        tokens.append(Token(TokenType.EOF, None, self.line, self.column))
         return tokens
