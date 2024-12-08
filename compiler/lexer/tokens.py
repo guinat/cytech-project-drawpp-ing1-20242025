@@ -1,36 +1,70 @@
 from enum import Enum, auto
 
 class TokenType(Enum):
-    INT = auto()
-    FLOAT = auto()
-    BOOL = auto()
-    STRING = auto()
+    # auto() is assigning an id to each token.type
 
-    IF = auto()
-    ELSE = auto()
-    WHILE = auto()
+    IDENTIFIER = auto() # variables names
+    NUMBER = auto() # ints and floats
 
-    IDENTIFIER = auto()
-    NUMBER = auto()
+    # keywords
+    CONST = auto() # "const"
+    VAR = auto() # "var"
+    IF = auto() # "if"
+    ELSE = auto() # "else"
+    ELIF = auto() # "elif"
+    FOR = auto() # "for"
+    WHILE = auto() # "while"
+    INT = auto() # "int"
+    FLOAT = auto() # "float"
+    STRING_TYPE = auto() # "string"
+    BOOL = auto() # "bool"
 
-    ASSIGN = auto()  # =
-    PLUS = auto()  # +
-    MINUS = auto()  # -
-    MULTIPLY = auto()  # *
-    DIVIDE = auto()  # /
-    EQ = auto()  # ==
-    NEQ = auto()  # !=
-    LT = auto()  # <
-    GT = auto()  # >
-    LTE = auto()  # <=
-    GTE = auto()  # >=
+    # special keywords
+    CURSOR = auto() # "cursor."
+    STATUS = auto() # "cursor.status()"
+    ORIENTATION = auto() # "cursor.orientation()"
+    MOVE = auto() # "cursor.move()"
+    POSITION = auto() # "cursor.position(x, y)"
+    STYLES = auto() # "styles."
+    THICKNESS = auto() # "cursor.styles.thickness()"
+    COLOR = auto() # "cursor.styles.color() or background.color()"
+    BACKGROUND = auto() # "background."
+    PATH = auto() # "background.path"
+    PRESET = auto() # "preset."
+    SQUARE = auto() # "preset.square(,)"
+    RECTANGLE = auto()
+    STAR = auto()
+    CIRCLE = auto()
+    TRIANGLE = auto()
 
-    LPAREN = auto()  # (
-    RPAREN = auto()  # )
-    LBRACE = auto()  # {
-    RBRACE = auto()  # }
-    SEMICOLON = auto()  # ;
-    COMMA = auto()  # ,
+    # comparing operators
+    LESS = "<"
+    LESS_EQUAL = "<="
+    GREATER = ">"
+    GREATER_EQUAL = ">="
+    EQUAL_EQUAL = "=="
+    NOT_EQUAL = "!="
+
+    # math operators
+    PLUS = "+"
+    MINUS = "-"
+    MULT = "*"
+    SLASH = "/"
+    MODULO = "%"
+    PLUS_EQUAL = "+="
+    MINUS_EQUAL = "-="
+    STAR_EQUAL = "*="
+    SLASH_EQUAL = "/="
+
+    # signs
+    ASSIGN = "="
+    SEMICOLON = ";"
+    COMMA = ","
+    DOT = "." 
+    LPAREN = "(" 
+    RPAREN = ")"
+    LBRACE = "{" 
+    RBRACE = "}"
 
     EOF = auto()
 
