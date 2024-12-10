@@ -68,6 +68,7 @@ class TokenType(Enum):
 
     EOF = auto()
 
+
 class Token:
     def __init__(self, type, value=None, line=0, column=0):
         self.type = type
