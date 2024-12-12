@@ -1,7 +1,10 @@
 from enum import Enum, auto
 
-
 class TokenType(Enum):
+    """
+    @brief Enum representing different types of tokens in draw++.
+    """
+
     # Identifiers and literals
     IDENTIFIER = auto()  # Variable names
     NUMBER = auto()  # Integers and floats
@@ -9,46 +12,47 @@ class TokenType(Enum):
     BOOL_VALUE = auto()  # true/false
 
     # Types
-    INT = auto()  # "int"
-    FLOAT = auto()  # "float"
-    BOOL = auto()  # "bool"
-    STRING_TYPE = auto()  # "string"
-    COLOR = auto()  # "color"
+    INT = auto()
+    FLOAT = auto()
+    BOOL = auto()
+    STRING_TYPE = auto()
+    COLOR = auto()
 
     # Declaration keywords
-    VAR = auto()  # "var"
-    CONST = auto()  # "const"
+    VAR = auto()
+    CONST = auto()
 
     # Control flow keywords
-    IF = auto()  # "if"
-    ELIF = auto()  # "elif"
-    ELSE = auto()  # "else"
-    FOR = auto()  # "for"
-    WHILE = auto()  # "while"
+    IF = auto()
+    ELIF = auto()
+    ELSE = auto()
+    FOR = auto()
+    WHILE = auto()
 
     # Cursor-related keywords
-    CURSOR = auto()  # "cursor"
-    CREATE_CURSOR = auto()  # "create_cursor"
-    MOVE = auto()  # "move"
-    ROTATE = auto()  # "rotate"
-    POSITION = auto()  # "position"
-    THICKNESS = auto()  # "thickness"
-    VISIBLE = auto()  # "visible"
+    CURSOR = auto()
+    CREATE_CURSOR = auto()
+    MOVE = auto()
+    ROTATE = auto()
+    POSITION = auto()
+    THICKNESS = auto()
+    VISIBLE = auto()
 
     # Shape-related keywords
-    DRAW_LINE = auto()  # "draw_line"
-    DRAW_RECTANGLE = auto()  # "draw_rectangle"
-    DRAW_CIRCLE = auto()  # "draw_circle"
-    DRAW_TRIANGLE = auto()  # "draw_triangle"
-    DRAW_ELLIPSE = auto()  # "draw_ellipse"
+    DRAW_LINE = auto()
+    DRAW_RECTANGLE = auto()
+    DRAW_CIRCLE = auto()
+    DRAW_TRIANGLE = auto()
+    DRAW_ELLIPSE = auto()
 
     # Window-related keywords
-    WINDOW = auto()  # "window"
-    CLEAR = auto()  # "clear"
-    UPDATE = auto()  # "update"
+    WINDOW = auto()
+    CLEAR = auto()
+    UPDATE = auto()
 
     # Color values
-    RGB = auto()  # "rgb"
+    RGB = auto()
+
     # Predefined colors
     BLACK = auto()
     WHITE = auto()
@@ -97,14 +101,14 @@ class TokenType(Enum):
     NOT_EQUAL = "!="
 
     # Delimiters
-    ASSIGN = "="  # Assignment operator
-    SEMICOLON = ";"  # Statement terminator
-    COMMA = ","  # Parameter separator
-    DOT = "."  # Member access
-    LPAREN = "("  # Left parenthesis
-    RPAREN = ")"  # Right parenthesis
-    LBRACE = "{"  # Left brace
-    RBRACE = "}"  # Right brace
+    ASSIGN = "="
+    SEMICOLON = ";"
+    COMMA = ","
+    DOT = "."
+    LPAREN = "("
+    RPAREN = ")"
+    LBRACE = "{"
+    RBRACE = "}"
 
     # Comments
     COMMENT = auto()  # Single-line comment //
@@ -113,13 +117,28 @@ class TokenType(Enum):
     # End of file
     EOF = auto()
 
-
 class Token:
+    """
+    @brief Class representing a token in the source code.
+    """
     def __init__(self, type, value=None, line=0, column=0):
+        """
+        @brief Initializes a Token instance.
+
+        @param type The type of the token (from TokenType).
+        @param value The value of the token (optional).
+        @param line The line number where the token is located (default: 0).
+        @param column The column number where the token is located (default: 0).
+        """
         self.type = type
         self.value = value
         self.line = line
         self.column = column
 
     def __repr__(self):
+        """
+        @brief Returns a string representation of the token.
+
+        @return A string in the format "Token(type, value, line, column)".
+        """
         return f"Token({self.type}, {self.value}, line={self.line}, column={self.column})"

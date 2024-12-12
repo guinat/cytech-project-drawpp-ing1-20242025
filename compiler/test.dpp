@@ -1,34 +1,26 @@
-// Test des déclarations et initialisations
-var int width = 800;
-var float angle = 45.0;
-var string message = "Hello Draw++";
-var bool isDrawing = true;
+var int windowWidth = 800;
+var int windowHeight = 600;
 
-// Test de la création et configuration du curseur
-cursor main = create_cursor(400, 300);
-main.color(RED);
-main.thickness(2);
+var int flagWidth = 300;
+var int flagHeight = 200;
 
-// Test des structures conditionnelles
-if (isDrawing == true) {
-    main.visible(true);
-    main.draw_rectangle(60, 40, true);
-} elif (width > 500) {
-    main.draw_circle(30, false);
-} else {
-    window.clear();
-};
+var int bandWidth = flagWidth / 3;
 
-// Test de la boucle for avec dessin
-for (var int i = 0; i < 4; i += 1) {
-    main.rotate(90);
-    main.move(100);
-};
+var int startX = (windowWidth - flagWidth) / 2;
+var int startY = (windowHeight - flagHeight) / 2;
 
-// Test des expressions arithmétiques et des méthodes de dessin
-var float radius = (width + angle) / 4;
-main.draw_circle(radius, true);
+window.clear(); //clear avant dessin
 
-// Test des couleurs RGB
-main.color(rgb(255, 0, 0));
-main.draw_triangle(50, 40, true);
+cursor cBlue = create_cursor(startX, startY);
+cBlue.color(BLUE);
+cBlue.draw_rectangle(bandWidth, flagHeight, true);
+
+cursor cWhite = create_cursor(startX + bandWidth, startY);
+cWhite.color(WHITE);
+cWhite.draw_rectangle(bandWidth, flagHeight, true);
+
+cursor cRed = create_cursor(startX + (bandWidth * 2), startY);
+cRed.color(RED);
+cRed.draw_rectangle(bandWidth, flagHeight, true);
+
+window.update();

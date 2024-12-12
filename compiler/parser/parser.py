@@ -2,15 +2,35 @@ from compiler.lexer.tokens import TokenType
 from compiler.parser.syntax_tree import *
 
 class Parser:
+    """
+    @brief A class responsible for parsing tokens into an abstract syntax tree (AST).
+    """
     def __init__(self, tokens):
+        """
+        @brief Initializes the parser with a list of tokens.
+
+        @param tokens List of tokens to be parsed.
+        """
         self.tokens = tokens
         self.pos = 0
         self.current_token = self.tokens[0]
 
     def error(self, message=""):
+        """
+        @brief Raises a parsing error with a message.
+
+        @param message A custom error message.
+        @throws Exception with details about the parsing error.
+        """
         raise Exception(f'Parser error at token {self.current_token}: {message}')
 
     def eat(self, token_type):
+        """
+        @brief Consumes the current token if it matches the expected type.
+
+        @param token_type The expected token type.
+        @throws Exception if the current token does not match the expected type.
+        """
         if self.current_token.type == token_type:
             self.pos += 1
             if self.pos < len(self.tokens):
@@ -19,10 +39,21 @@ class Parser:
             self.error(f'Expected {token_type}, got {self.current_token.type}')
 
     def peek(self):
+        """
+        @brief Peeks at the next token without consuming it.
+
+        @return The next token or None if at the end of the token list.
+        """
         peek_pos = self.pos + 1
         return self.tokens[peek_pos] if peek_pos < len(self.tokens) else None
 
     def is_cursor_method_type(self, ttype):
+        """
+        @brief Checks if a token type corresponds to a cursor method.
+
+        @param ttype The token type to check.
+        @return True if the token type is a cursor method, False otherwise.
+        """
         cursor_method_types = [
             TokenType.COLOR,
             TokenType.THICKNESS,
@@ -38,12 +69,23 @@ class Parser:
         return ttype in cursor_method_types
 
     def program(self):
+        """
+        @brief Parses a program consisting of multiple statements.
+
+        @return A Program node containing a list of statements.
+        """
         statements = []
         while self.current_token.type != TokenType.EOF:
             statements.append(self.statement())
         return Program(statements)
 
     def statement(self):
+        """
+        @brief Parses a single statement.
+
+        @return A statement node.
+        @throws Exception if an unexpected token is encountered.
+        """
         token = self.current_token
 
         if token.type == TokenType.VAR:
@@ -62,10 +104,8 @@ class Parser:
             return self.while_statement()
 
         elif token.type == TokenType.WINDOW:
-            # window statement (window.clear(), window.update())
             return self.window_statement()
 
-        # Méthodes sans "window" au début, ex : "clear()", "update()" seuls
         elif token.type in [TokenType.CLEAR, TokenType.UPDATE]:
             return self.window_statement()
 
@@ -76,36 +116,29 @@ class Parser:
             self.error(f"Unexpected token {token.type} in statement")
 
     def identifier_statement(self):
-        # On a lu un IDENTIFIER, plusieurs cas :
-        # 1. IDENTIFIER '=' ... => assignation
-        # 2. IDENTIFIER '+=' etc. => assignation
-        # 3. IDENTIFIER '.' IDENTIFIER(...) => appel méthode curseur ou fenêtre
-        # Sinon erreur
+        """
+        @brief Parses a statement starting with an identifier.
+
+        @return A node representing an assignment, method call, or error.
+        """
         name = self.current_token.value
         self.eat(TokenType.IDENTIFIER)
 
-        # Vérifie si on a un "." -> appel de méthode
         if self.current_token.type == TokenType.DOT:
             self.eat(TokenType.DOT)
-            # Après le ".", on doit avoir un token de type méthode ou commande
             method_token = self.current_token
             if method_token.type in [TokenType.CLEAR, TokenType.UPDATE]:
-                # window.clear() ou window.update() style
-                # mais on est dans identifier_statement donc name != 'window'
-                # On le gére comme un window_statement si name = "window"
                 if name == 'window':
                     return self.window_call(method_token)
                 else:
                     self.error("Invalid window method call on non-window identifier")
             elif self.is_cursor_method_type(method_token.type):
-                # Appel méthode curseur
                 method_name = method_token.value
                 self.eat(method_token.type)
                 return self.cursor_method_statement(name, method_name)
             else:
                 self.error("Expected a known method after '.'")
 
-        # Sinon c'est une assignation
         elif self.current_token.type in [TokenType.ASSIGN, TokenType.PLUS_EQUAL,
                                          TokenType.MINUS_EQUAL, TokenType.STAR_EQUAL,
                                          TokenType.SLASH_EQUAL]:
@@ -114,6 +147,11 @@ class Parser:
             self.error("Expected '.' or assignment operator after identifier")
 
     def cursor_statement(self):
+        """
+        @brief Parses a cursor creation statement.
+
+        @return A CursorCreation node.
+        """
         self.eat(TokenType.CURSOR)
         cursor_name = self.current_token.value
         self.eat(TokenType.IDENTIFIER)
@@ -132,6 +170,13 @@ class Parser:
         return CursorCreation(cursor_name, x, y)
 
     def cursor_method_statement(self, cursor_name, method_name):
+        """
+        @brief Parses a cursor method statement.
+
+        @param cursor_name The name of the cursor.
+        @param method_name The name of the method to call.
+        @return A CursorMethod or DrawCommand node.
+        """
         self.eat(TokenType.LPAREN)
 
         params = []
@@ -150,7 +195,12 @@ class Parser:
             return CursorMethod(cursor_name, method_name, params)
 
     def window_call(self, method_token):
-        # Appel de méthode sur 'window'
+        """
+        @brief Parses a method call on the "window" object.
+
+        @param method_token The method token (e.g., clear or update).
+        @return A WindowCommand node.
+        """
         self.eat(method_token.type)
         self.eat(TokenType.LPAREN)
         self.eat(TokenType.RPAREN)
@@ -158,6 +208,13 @@ class Parser:
         return WindowCommand(method_token.value)
 
     def assignment_statement(self, name, eat_semicolon=True):
+        """
+        @brief Parses an assignment statement.
+
+        @param name The name of the variable being assigned.
+        @param eat_semicolon Whether to consume the semicolon at the end.
+        @return An Assign node.
+        """
         if self.current_token.type in [TokenType.PLUS_EQUAL, TokenType.MINUS_EQUAL,
                                        TokenType.STAR_EQUAL, TokenType.SLASH_EQUAL]:
             op = self.current_token.type
@@ -180,7 +237,11 @@ class Parser:
         return Assign(name, value)
 
     def window_statement(self):
-        # window CLEAR ou UPDATE (window.clear(), window.update())
+        """
+        @brief Parses a window-related statement (e.g., clear, update).
+
+        @return A WindowCommand node.
+        """
         token = self.current_token
         if token.type == TokenType.WINDOW:
             self.eat(TokenType.WINDOW)
@@ -190,7 +251,6 @@ class Parser:
                 self.error("Expected 'clear' or 'update' after 'window.'")
             self.eat(method_token.type)
         else:
-            # clear() ou update() seuls (même sémantique ?)
             method_token = self.current_token
             self.eat(method_token.type)
         self.eat(TokenType.LPAREN)
@@ -199,6 +259,11 @@ class Parser:
         return WindowCommand(method_token.value)
 
     def if_statement(self):
+        """
+        @brief Parses an if-statement.
+
+        @return An If node.
+        """
         self.eat(TokenType.IF)
         self.eat(TokenType.LPAREN)
         condition = self.bool_expr()
@@ -238,10 +303,14 @@ class Parser:
         return If(condition, true_body, elif_bodies, false_body)
 
     def for_statement(self):
+        """
+        @brief Parses a for-loop statement.
+
+        @return A For node.
+        """
         self.eat(TokenType.FOR)
         self.eat(TokenType.LPAREN)
 
-        # Initialisation
         if self.current_token.type == TokenType.VAR:
             init = self.var_declaration()
         else:
@@ -249,11 +318,9 @@ class Parser:
             self.eat(TokenType.IDENTIFIER)
             init = self.assignment_statement(var_name)
 
-        # Condition
         condition = self.bool_expr()
         self.eat(TokenType.SEMICOLON)
 
-        # Update sans point-virgule
         var_name = self.current_token.value
         self.eat(TokenType.IDENTIFIER)
         update = self.assignment_statement(var_name, eat_semicolon=False)
@@ -270,6 +337,11 @@ class Parser:
         return For(init, condition, update, body)
 
     def while_statement(self):
+        """
+        @brief Parses a while-loop statement.
+
+        @return A While node.
+        """
         self.eat(TokenType.WHILE)
         self.eat(TokenType.LPAREN)
         condition = self.bool_expr()
@@ -285,6 +357,11 @@ class Parser:
         return While(condition, body)
 
     def bool_expr(self):
+        """
+        @brief Parses a boolean expression.
+
+        @return A BinOp or expression node.
+        """
         left = self.expr()
 
         if self.current_token.type in [TokenType.LESS, TokenType.LESS_EQUAL,
@@ -298,6 +375,11 @@ class Parser:
         return left
 
     def expr(self):
+        """
+        @brief Parses an expression.
+
+        @return A BinOp or term node.
+        """
         node = self.term()
 
         while self.current_token.type in [TokenType.PLUS, TokenType.MINUS]:
@@ -308,6 +390,11 @@ class Parser:
         return node
 
     def term(self):
+        """
+        @brief Parses a term.
+
+        @return A BinOp or factor node.
+        """
         node = self.factor()
 
         while self.current_token.type in [TokenType.MULT, TokenType.SLASH, TokenType.MODULO]:
@@ -318,6 +405,12 @@ class Parser:
         return node
 
     def factor(self):
+        """
+        @brief Parses a factor.
+
+        @return A node representing a number, string, boolean, or other basic value.
+        @throws Exception if the factor is invalid.
+        """
         token = self.current_token
 
         if token.type == TokenType.NUMBER:
@@ -364,6 +457,12 @@ class Parser:
         self.error("Invalid factor")
 
     def var_declaration(self):
+        """
+        @brief Parses a variable declaration.
+
+        @return A VarDecl node.
+        @throws Exception if the type specifier is missing or invalid.
+        """
         self.eat(TokenType.VAR)
 
         valid_types = [
@@ -390,4 +489,9 @@ class Parser:
         return VarDecl(var_type, var_name, init_value)
 
     def parse(self):
+        """
+        @brief Parses the entire token stream into an abstract syntax tree.
+
+        @return A Program node representing the parsed AST.
+        """
         return self.program()

@@ -1,7 +1,15 @@
 from compiler.lexer.tokens import Token, TokenType
 
 class Lexer:
+    """
+    @brief A lexer class to tokenize source code into meaningful tokens.
+    """
     def __init__(self, source_code):
+        """
+        @brief Initializes the lexer with the source code.
+
+        @param source_code The source code as a string to tokenize.
+        """
         self.source_code = source_code
         self.position = 0
         self.line = 1
@@ -10,6 +18,11 @@ class Lexer:
         self.advance()
 
     def advance(self):
+        """
+        @brief Advances the lexer to the next character in the source code.
+
+        @return The current character after advancing.
+        """
         if self.position < len(self.source_code):
             self.current_char = self.source_code[self.position]
             self.position += 1
@@ -23,16 +36,27 @@ class Lexer:
         return self.current_char
 
     def peek(self):
+        """
+        @brief Peeks at the next character in the source code without advancing.
+
+        @return The next character or None if at the end of the source code.
+        """
         peek_pos = self.position
         if peek_pos < len(self.source_code):
             return self.source_code[peek_pos]
         return None
 
     def skip_whitespace(self):
+        """
+        @brief Skips over whitespace characters in the source code.
+        """
         while self.current_char is not None and self.current_char in ' \t\n\r':
             self.advance()
 
     def skip_comment(self):
+        """
+        @brief Skips over comments in the source code (single-line and multi-line).
+        """
         if self.current_char == '/' and self.peek() == '/':
             while self.current_char is not None and self.current_char != '\n':
                 self.advance()
@@ -47,7 +71,11 @@ class Lexer:
                 self.advance()
 
     def get_identifier(self):
-        # Lis un identificateur simple (sans point)
+        """
+        @brief Extracts an identifier or keyword from the source code.
+
+        @return The extracted identifier as a string.
+        """
         identifier = ''
         start_column = self.column
 
@@ -58,6 +86,12 @@ class Lexer:
         return identifier
 
     def get_number(self):
+        """
+        @brief Extracts a number (integer or float) from the source code.
+
+        @return A tuple containing the token type and the numeric value.
+        @throws ValueError if the number format is invalid.
+        """
         number = ''
         decimal_points = 0
 
@@ -74,6 +108,12 @@ class Lexer:
         return TokenType.NUMBER, float(number)
 
     def get_string(self):
+        """
+        @brief Extracts a string literal from the source code.
+
+        @return A tuple containing the token type and the string value.
+        @throws ValueError if the string is unterminated.
+        """
         string = ''
         self.advance()
 
@@ -88,6 +128,11 @@ class Lexer:
         return TokenType.STRING, string
 
     def get_operator(self):
+        """
+        @brief Extracts an operator or punctuation from the source code.
+
+        @return A tuple containing the token type and the operator.
+        """
         current_char = self.current_char
         column = self.column
         self.advance()
@@ -120,39 +165,33 @@ class Lexer:
         return operators.get(current_char), current_char
 
     def tokenize(self):
+        """
+        @brief Tokenizes the entire source code into a list of tokens.
+
+        @return A list of tokens extracted from the source code.
+        @throws ValueError if an unexpected character is encountered.
+        """
         tokens = []
 
-        # Mots-clés sans point
         keywords = {
-            # Types de base
             'int': TokenType.INT,
             'float': TokenType.FLOAT,
             'string': TokenType.STRING_TYPE,
             'bool': TokenType.BOOL,
-
-            # Déclaration
             'var': TokenType.VAR,
             'const': TokenType.CONST,
-
-            # Structures
             'if': TokenType.IF,
             'elif': TokenType.ELIF,
             'else': TokenType.ELSE,
             'for': TokenType.FOR,
             'while': TokenType.WHILE,
-
-            # Valeurs de BOOL
             'true': TokenType.BOOL_VALUE,
             'false': TokenType.BOOL_VALUE,
-
-            # Curseur et fenêtre
             'cursor': TokenType.CURSOR,
             'create_cursor': TokenType.CREATE_CURSOR,
             'window': TokenType.WINDOW,
             'clear': TokenType.CLEAR,
             'update': TokenType.UPDATE,
-
-            # Méthodes de curseur color.(..) (sans le point)
             'color': TokenType.COLOR,
             'thickness': TokenType.THICKNESS,
             'move': TokenType.MOVE,
@@ -163,10 +202,7 @@ class Lexer:
             'draw_circle': TokenType.DRAW_CIRCLE,
             'draw_triangle': TokenType.DRAW_TRIANGLE,
             'draw_ellipse': TokenType.DRAW_ELLIPSE,
-
             'rgb': TokenType.RGB,
-
-            # Couleurs
             'RED': TokenType.RED,
             'GREEN': TokenType.GREEN,
             'BLUE': TokenType.BLUE,
@@ -175,9 +211,6 @@ class Lexer:
             'GRAY': TokenType.GRAY,
             'ORANGE': TokenType.ORANGE,
             'PURPLE': TokenType.PURPLE
-            #TODO : Ajouter les autres couleurs
-
-
         }
 
         while self.current_char is not None:
@@ -192,23 +225,19 @@ class Lexer:
                     continue
 
             if self.current_char.isalpha() or self.current_char == '_':
-                # Lis un identificateur simple
                 start_line = self.line
                 start_column = self.column
                 ident = self.get_identifier()
 
-                # Vérifie si c'est un mot-clé
                 token_type = keywords.get(ident, TokenType.IDENTIFIER)
                 tokens.append(Token(token_type, ident, start_line, start_column))
 
-                # Si le prochain char est un point, on l'émet en token séparé
                 while self.current_char == '.':
                     dot_line = self.line
                     dot_col = self.column
                     self.advance()
                     tokens.append(Token(TokenType.DOT, '.', dot_line, dot_col))
 
-                    # Lit le nouvel identificateur après le point
                     if self.current_char is not None and (self.current_char.isalpha() or self.current_char == '_'):
                         method_line = self.line
                         method_col = self.column
@@ -264,6 +293,9 @@ class Lexer:
         return tokens
 
 def main():
+    """
+    @brief Main function to demonstrate the lexer functionality.
+    """
     source_code = """
     var int width = 800;
     var float angle = 45.0;

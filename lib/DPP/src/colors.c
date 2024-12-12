@@ -1,7 +1,15 @@
 #include "../include/colors.h"
 
-// Custom color creation function
-SDL_Color custom_color(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+/**
+ * @brief Creates a custom SDL_Color with specified RGBA values.
+ *
+ * @param r The red component of the color (0-255).
+ * @param g The green component of the color (0-255).
+ * @param b The blue component of the color (0-255).
+ * @param a The alpha component of the color (0-255).
+ * @return An `SDL_Color` structure initialized with the given values.
+ */
+ SDL_Color custom_color(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_Color color = {
         .r = r,
         .g = g,

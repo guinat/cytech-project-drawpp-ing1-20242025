@@ -1,4 +1,3 @@
-# compiler.py
 import os
 import argparse
 from compiler.lexer.lexer import Lexer
@@ -18,7 +17,6 @@ class Compiler:
     def __init__(self):
         self.tokens = None
         self.ast = None
-        self.symbol_table = None
 
     def compile(self, input_file, output_file=None):
         try:
@@ -70,7 +68,7 @@ class Compiler:
         except Exception as e:
             print(f"\n❌ Erreur inattendue: {str(e)}")
             import traceback
-            traceback.print_exc()  # Ajout pour voir la trace complète
+            traceback.print_exc()
             return False
 
     def _lexical_analysis(self, source_code):
@@ -82,12 +80,11 @@ class Compiler:
         return parser.parse()
 
     def _semantic_analysis(self, ast):
-        return analyze(ast)  # Utilisation de la fonction analyze importée
+        return analyze(ast)
 
     def _generate_code(self, ast, output_file):
         generator = CodeGenerator()
-        code = generator.visit(ast)
-
+        code = generator.generate(ast)  # Utilisation de la méthode generate(ast) qui renvoie une chaîne de caractères
         os.makedirs(os.path.dirname(os.path.abspath(output_file)), exist_ok=True)
         with open(output_file, 'w') as f:
             f.write(code)
@@ -99,7 +96,6 @@ def main():
     parser.add_argument('-o', '--output', help='Fichier de sortie C (.c)')
     args = parser.parse_args()
 
-    # Afficher le répertoire de travail actuel pour le débogage
     print(f"Répertoire de travail : {os.getcwd()}")
     input_file = os.path.abspath(args.input)
     print(f"Fichier d'entrée : {input_file}")

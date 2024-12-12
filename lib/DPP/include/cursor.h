@@ -18,7 +18,8 @@ typedef struct {
 
 // Cursor management functions
 /**
- * Creates a new cursor at the specified position
+ * @brief Creates a new cursor at the specified position
+ *
  * @param x The initial x coordinate
  * @param y The initial y coordinate
  * @return Pointer to the created cursor, or NULL if no cursors available
@@ -26,28 +27,32 @@ typedef struct {
 Cursor* create_cursor(double x, double y);
 
 /**
- * Moves a cursor in its current direction
+ * @brief Moves a cursor in its current direction
+ *
  * @param cursor The cursor to move
  * @param distance The distance to move
  */
 void move_cursor(Cursor* cursor, double distance);
 
 /**
- * Rotates a cursor by a specified angle
+ * @brief Rotates a cursor by a specified angle
+ *
  * @param cursor The cursor to rotate
  * @param angle The angle to rotate by (in degrees)
  */
 void rotate_cursor(Cursor* cursor, double angle);
 
 /**
- * Sets the color of a cursor
+ * @brief Sets the color of a cursor
+ *
  * @param cursor The cursor to modify
  * @param color The new color
  */
 void set_cursor_color(Cursor* cursor, SDL_Color color);
 
 /**
- * Sets the visibility of a cursor
+ * @brief Sets the visibility of a cursor
+ *
  * @param cursor The cursor to modify
  * @param visible The visibility state
  */
@@ -55,14 +60,16 @@ void set_cursor_visibility(Cursor* cursor, bool visible);
 
 // Cursor drawing functions
 /**
- * Draws a line from the cursor's position
+ * @brief Draws a line from the cursor's position
+ *
  * @param cursor The cursor to draw with
  * @param length The length of the line
  */
 void cursor_draw_line(Cursor* cursor, double length);
 
 /**
- * Draws a rectangle from the cursor's position
+ * @brief Draws a rectangle from the cursor's position
+ *
  * @param cursor The cursor to draw with
  * @param width The width of the rectangle
  * @param height The height of the rectangle
@@ -71,7 +78,8 @@ void cursor_draw_line(Cursor* cursor, double length);
 void cursor_draw_rectangle(Cursor* cursor, double width, double height, bool filled);
 
 /**
- * Draws a circle at the cursor's position
+ * @brief Draws a circle at the cursor's position
+ *
  * @param cursor The cursor to draw with
  * @param radius The radius of the circle
  * @param filled Whether to fill the circle
@@ -79,7 +87,8 @@ void cursor_draw_rectangle(Cursor* cursor, double width, double height, bool fil
 void cursor_draw_circle(Cursor* cursor, double radius, bool filled);
 
 /**
- * Draws a triangle from the cursor's position
+ * @brief Draws a triangle from the cursor's position
+ *
  * @param cursor The cursor to draw with
  * @param base The base length of the triangle
  * @param height The height of the triangle
@@ -88,7 +97,8 @@ void cursor_draw_circle(Cursor* cursor, double radius, bool filled);
 void cursor_draw_triangle(Cursor* cursor, double base, double height, bool filled);
 
 /**
- * Draws an ellipse at the cursor's position
+ * @brief Draws an ellipse at the cursor's position
+ *
  * @param cursor The cursor to draw with
  * @param radiusX The horizontal radius
  * @param radiusY The vertical radius

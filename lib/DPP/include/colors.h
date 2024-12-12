@@ -4,7 +4,8 @@
 #include <SDL2/SDL.h>
 
 /**
- * Creates a custom color
+ * @brief Creates a custom color
+ *
  * @param r Red component (0-255)
  * @param g Green component (0-255)
  * @param b Blue component (0-255)
