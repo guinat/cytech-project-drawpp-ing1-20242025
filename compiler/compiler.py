@@ -1,87 +1,108 @@
-#!/usr/bin/env python3
-
 import os
-import sys
 import argparse
-from pathlib import Path
+from compiler.lexer.lexer import Lexer
+from compiler.parser.parser import Parser
+from compiler.semantic.semantic_analyzer import SemanticAnalyzer, SemanticError, analyze
+from compiler.codegen.codegen import CodeGenerator
 
-# Imports locaux avec chemins relatifs
-from .lexer.lexer import Lexer
-from .lexer.tokens import TokenType
-from .parser.parser import Parser
-from .semantic.semantic_analyzer import SemanticAnalyzer
-from .codegen.codegen import CodeGenerator
+
+class CompilationError(Exception):
+    def __init__(self, phase, message):
+        self.phase = phase
+        self.message = message
+        super().__init__(f"{phase}: {message}")
 
 
 class Compiler:
-    def __init__(self, debug=False):
-        self.debug = debug
+    def __init__(self):
+        self.tokens = None
+        self.ast = None
 
-    def compile(self, source_file, output_file):
+    def compile(self, input_file, output_file=None):
         try:
+            # Vérification de l'extension
+            if not input_file.endswith('.dpp'):
+                raise CompilationError("Input", "Le fichier source doit avoir l'extension .dpp")
+
             # Lecture du fichier source
-            with open(source_file, 'r') as f:
+            print(f"\n[1/5] Lecture du fichier source: {input_file}")
+            with open(input_file, 'r') as f:
                 source_code = f.read()
 
-            # 1. Analyse lexicale
-            if self.debug:
-                print("Starting lexical analysis...")
-            lexer = Lexer(source_code)
-            tokens = lexer.tokenize()
-            if self.debug:
-                print("Lexical analysis completed.")
+            # Analyse lexicale
+            print("\n[2/5] Analyse lexicale...")
+            self.tokens = self._lexical_analysis(source_code)
+            print("✓ Analyse lexicale réussie")
+            print(f"Nombre de tokens: {len(self.tokens)}")
 
-            # 2. Analyse syntaxique
-            if self.debug:
-                print("Starting parsing...")
-            parser = Parser(tokens)
-            ast = parser.parse()
-            if self.debug:
-                print("Parsing completed.")
+            # Analyse syntaxique
+            print("\n[3/5] Analyse syntaxique...")
+            self.ast = self._syntax_analysis(self.tokens)
+            print("✓ Analyse syntaxique réussie")
+            print(f"Nombre de déclarations: {len(self.ast.statements)}")
 
-            # 3. Analyse sémantique
-            if self.debug:
-                print("Starting semantic analysis...")
-            semantic_analyzer = SemanticAnalyzer()
-            semantic_analyzer.visit(ast)
-            if self.debug:
-                print("Semantic analysis completed.")
+            # Analyse sémantique
+            print("\n[4/5] Analyse sémantique...")
+            success, error = self._semantic_analysis(self.ast)
+            if not success:
+                raise CompilationError("Semantic", error)
+            print("✓ Analyse sémantique réussie")
 
-            # 4. Génération de code
-            if self.debug:
-                print("Starting code generation...")
-            code_generator = CodeGenerator()
-            code_generator.generate(ast)
-            code_generator.to_c_file(output_file)
-            if self.debug:
-                print(f"Code generation completed. Output written to {output_file}")
+            # Génération de code
+            print("\n[5/5] Génération de code...")
+            if output_file is None:
+                output_file = os.path.splitext(input_file)[0] + '.c'
 
+            self._generate_code(self.ast, output_file)
+            print(f"✓ Code C généré avec succès: {output_file}")
+
+            print("\n✨ Compilation terminée avec succès!")
             return True
 
-        except Exception as e:
-            print(f"Compilation error: {str(e)}")
-            if self.debug:
-                import traceback
-                traceback.print_exc()
+        except FileNotFoundError:
+            print(f"\n❌ Erreur: Fichier non trouvé: {input_file}")
             return False
+        except CompilationError as e:
+            print(f"\n❌ Erreur de compilation ({e.phase}): {e.message}")
+            return False
+        except Exception as e:
+            print(f"\n❌ Erreur inattendue: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+
+    def _lexical_analysis(self, source_code):
+        lexer = Lexer(source_code)
+        return lexer.tokenize()
+
+    def _syntax_analysis(self, tokens):
+        parser = Parser(tokens)
+        return parser.parse()
+
+    def _semantic_analysis(self, ast):
+        return analyze(ast)
+
+    def _generate_code(self, ast, output_file):
+        generator = CodeGenerator()
+        code = generator.generate(ast)  # Utilisation de la méthode generate(ast) qui renvoie une chaîne de caractères
+        os.makedirs(os.path.dirname(os.path.abspath(output_file)), exist_ok=True)
+        with open(output_file, 'w') as f:
+            f.write(code)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Draw++ Compiler")
-    parser.add_argument('input', help='Input source file')
-    parser.add_argument('-o', '--output', help='Output C file', default='output.c')
-    parser.add_argument('-d', '--debug', action='store_true', help='Enable debug output')
-
+    parser = argparse.ArgumentParser(description="Compilateur Draw++")
+    parser.add_argument('input', help='Fichier source Draw++ (.dpp)')
+    parser.add_argument('-o', '--output', help='Fichier de sortie C (.c)')
     args = parser.parse_args()
 
-    compiler = Compiler(debug=args.debug)
-    success = compiler.compile(args.input, args.output)
+    print(f"Répertoire de travail : {os.getcwd()}")
+    input_file = os.path.abspath(args.input)
+    print(f"Fichier d'entrée : {input_file}")
 
-    if success:
-        print(f"Compilation successful. Output written to {args.output}")
-    else:
-        print("Compilation failed.")
-        exit(1)
+    compiler = Compiler()
+    success = compiler.compile(input_file, args.output)
+    exit(0 if success else 1)
 
 
 if __name__ == "__main__":

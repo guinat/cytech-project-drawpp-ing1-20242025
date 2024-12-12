@@ -1,25 +1,53 @@
 {
     "headers": [
+        "#include \"drawpp.h\"",
         "#include <stdio.h>",
-        "#include <stdlib.h>",
-        "#include <stdbool.h>"
+        "#include <stdbool.h>",
+        "#include <math.h>"
     ],
-    "types": {
+    "type_mappings": {
         "TokenType.INT": "int",
         "TokenType.FLOAT": "float",
         "TokenType.BOOL": "bool",
-        "TokenType.STRING": "char*"
+        "TokenType.STRING_TYPE": "char*",
+        "TokenType.COLOR": "SDL_Color"
     },
     "operators": {
         "TokenType.PLUS": "+",
         "TokenType.MINUS": "-",
-        "TokenType.MULTIPLY": "*",
-        "TokenType.DIVIDE": "/",
-        "TokenType.LT": "<",
-        "TokenType.GT": ">",
-        "TokenType.LTE": "<=",
-        "TokenType.GTE": ">=",
-        "TokenType.EQ": "==",
-        "TokenType.NEQ": "!="
+        "TokenType.MULT": "*",
+        "TokenType.SLASH": "/",
+        "TokenType.MODULO": "%",
+        "TokenType.LESS": "<",
+        "TokenType.LESS_EQUAL": "<=",
+        "TokenType.GREATER": ">",
+        "TokenType.GREATER_EQUAL": ">=",
+        "TokenType.EQUAL_EQUAL": "==",
+        "TokenType.NOT_EQUAL": "!="
+    },
+    "colors": {
+        "RED": "red",
+        "GREEN": "green",
+        "BLUE": "blue",
+        "BLACK": "black",
+        "WHITE": "white",
+        "GRAY": "gray",
+        "LIGHT_GRAY": "light_gray",
+        "DARK_GRAY": "dark_gray",
+        "ORANGE": "orange",
+        "BROWN": "brown",
+        "PINK": "pink",
+        "CORAL": "coral",
+        "GOLD": "gold",
+        "PURPLE": "purple",
+        "INDIGO": "indigo",
+        "TURQUOISE": "turquoise",
+        "NAVY": "navy",
+        "TEAL": "teal",
+        "FOREST_GREEN": "forest_green",
+        "SKY_BLUE": "sky_blue",
+        "OLIVE": "olive",
+        "SALMON": "salmon",
+        "BEIGE": "beige"
     }
 }
