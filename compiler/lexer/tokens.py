@@ -1,43 +1,94 @@
 from enum import Enum, auto
 
+
 class TokenType(Enum):
-    # auto() is assigning an id to each token.type
+    # Identifiers and literals
+    IDENTIFIER = auto()  # Variable names
+    NUMBER = auto()  # Integers and floats
+    STRING = auto()  # String literals
+    BOOL_VALUE = auto()  # true/false
 
-    IDENTIFIER = auto() # variables names
-    NUMBER = auto() # ints and floats
+    # Types
+    INT = auto()  # "int"
+    FLOAT = auto()  # "float"
+    BOOL = auto()  # "bool"
+    STRING_TYPE = auto()  # "string"
+    COLOR = auto()  # "color"
 
-    # keywords
-    CONST = auto() # "const"
-    VAR = auto() # "var"
-    IF = auto() # "if"
-    ELSE = auto() # "else"
-    ELIF = auto() # "elif"
-    FOR = auto() # "for"
-    WHILE = auto() # "while"
-    INT = auto() # "int"
-    FLOAT = auto() # "float"
-    STRING_TYPE = auto() # "string"
-    BOOL = auto() # "bool"
+    # Declaration keywords
+    VAR = auto()  # "var"
+    CONST = auto()  # "const"
 
-    # special keywords
-    CURSOR = auto() # "cursor."
-    STATUS = auto() # "cursor.status()"
-    ORIENTATION = auto() # "cursor.orientation()"
-    MOVE = auto() # "cursor.move()"
-    POSITION = auto() # "cursor.position(x, y)"
-    STYLES = auto() # "styles."
-    THICKNESS = auto() # "cursor.styles.thickness()"
-    COLOR = auto() # "cursor.styles.color() or background.color()"
-    BACKGROUND = auto() # "background."
-    PATH = auto() # "background.path"
-    PRESET = auto() # "preset."
-    SQUARE = auto() # "preset.square(,)"
-    RECTANGLE = auto()
-    STAR = auto()
-    CIRCLE = auto()
-    TRIANGLE = auto()
+    # Control flow keywords
+    IF = auto()  # "if"
+    ELIF = auto()  # "elif"
+    ELSE = auto()  # "else"
+    FOR = auto()  # "for"
+    WHILE = auto()  # "while"
 
-    # comparing operators
+    # Cursor-related keywords
+    CURSOR = auto()  # "cursor"
+    CREATE_CURSOR = auto()  # "create_cursor"
+    MOVE = auto()  # "move"
+    ROTATE = auto()  # "rotate"
+    POSITION = auto()  # "position"
+    THICKNESS = auto()  # "thickness"
+    VISIBLE = auto()  # "visible"
+
+    # Shape-related keywords
+    DRAW_LINE = auto()  # "draw_line"
+    DRAW_RECTANGLE = auto()  # "draw_rectangle"
+    DRAW_CIRCLE = auto()  # "draw_circle"
+    DRAW_TRIANGLE = auto()  # "draw_triangle"
+    DRAW_ELLIPSE = auto()  # "draw_ellipse"
+
+    # Window-related keywords
+    WINDOW = auto()  # "window"
+    CLEAR = auto()  # "clear"
+    UPDATE = auto()  # "update"
+
+    # Color values
+    RGB = auto()  # "rgb"
+    # Predefined colors
+    BLACK = auto()
+    WHITE = auto()
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
+    GRAY = auto()
+    LIGHT_GRAY = auto()
+    DARK_GRAY = auto()
+    ORANGE = auto()
+    BROWN = auto()
+    PINK = auto()
+    CORAL = auto()
+    GOLD = auto()
+    PURPLE = auto()
+    INDIGO = auto()
+    TURQUOISE = auto()
+    NAVY = auto()
+    TEAL = auto()
+    FOREST_GREEN = auto()
+    SKY_BLUE = auto()
+    OLIVE = auto()
+    SALMON = auto()
+    BEIGE = auto()
+    YELLOW = auto()
+
+    # Operators
+    PLUS = "+"
+    MINUS = "-"
+    MULT = "*"
+    SLASH = "/"
+    MODULO = "%"
+
+    # Compound assignment operators
+    PLUS_EQUAL = "+="
+    MINUS_EQUAL = "-="
+    STAR_EQUAL = "*="
+    SLASH_EQUAL = "/="
+
+    # Comparison operators
     LESS = "<"
     LESS_EQUAL = "<="
     GREATER = ">"
@@ -45,27 +96,21 @@ class TokenType(Enum):
     EQUAL_EQUAL = "=="
     NOT_EQUAL = "!="
 
-    # math operators
-    PLUS = "+"
-    MINUS = "-"
-    MULT = "*"
-    SLASH = "/"
-    MODULO = "%"
-    PLUS_EQUAL = "+="
-    MINUS_EQUAL = "-="
-    STAR_EQUAL = "*="
-    SLASH_EQUAL = "/="
+    # Delimiters
+    ASSIGN = "="  # Assignment operator
+    SEMICOLON = ";"  # Statement terminator
+    COMMA = ","  # Parameter separator
+    DOT = "."  # Member access
+    LPAREN = "("  # Left parenthesis
+    RPAREN = ")"  # Right parenthesis
+    LBRACE = "{"  # Left brace
+    RBRACE = "}"  # Right brace
 
-    # signs
-    ASSIGN = "="
-    SEMICOLON = ";"
-    COMMA = ","
-    DOT = "." 
-    LPAREN = "(" 
-    RPAREN = ")"
-    LBRACE = "{" 
-    RBRACE = "}"
+    # Comments
+    COMMENT = auto()  # Single-line comment //
+    MULTILINE_COMMENT = auto()  # Multi-line comment /* */
 
+    # End of file
     EOF = auto()
 
 

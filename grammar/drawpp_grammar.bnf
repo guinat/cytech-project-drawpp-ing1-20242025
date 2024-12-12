@@ -1,91 +1,111 @@
-<drawpp_program> ::= <statement_list>  # a Draw++ file is made of statements.
+<drawpp_program> ::= <statement_list>
 
-# <statement_list> ::= <statement> | <statement> <statement_list> # Une liste d'instructions est soit une seule instruction, soit une instruction suivie d'une autre liste d'instructions.
+<statement_list> ::= <statement> ";" | <statement> ";" <statement_list>
 
-<statement_list> ::= <variable_declaration> | <constant_declaration> | <assignment> | <compound_assignment> | <if_statement> | <loop_statement> | <cursor_statement> | <background_statement> | <preset_statement> ";"
-# listing all possible statements - compiler will always read a statement as finishing with a semicolon
+<statement> ::= <variable_declaration>
+              | <constant_declaration>
+              | <assignment>
+              | <compound_assignment>
+              | <if_statement>
+              | <loop_statement>
+              | <cursor_statement>
+              | <shape_statement>
+              | <window_statement>
+              | <comment>
 
-<variable_declaration> ::= <const_keyword> <type> <identifier> "=" <expression>
-# declaring a variable with following statements : const/not const, type, name, '=', value. all of these parameters are mandatory for a correct declaration
+<variable_declaration> ::= "var" <type> <identifier> "=" <expression>
+<constant_declaration> ::= "const" <type> <identifier> "=" <expression>
 
-<const_keyword> ::= "const" | "var" # keyword for declaring consts/vars
+<type> ::= "int" | "float" | "bool" | "string" | "color"
 
-<type> ::= "int" | "float" | "string" | "bool"  # available types (implicitly int64 and float64)
+<assignment> ::= <identifier> "=" <expression>
+<compound_assignment> ::= <identifier> <compound_operator> <expression>
+<compound_operator> ::= "+=" | "-=" | "*=" | "/="
 
-<assignment> ::= <identifier> "=" <expression>   # affecting a value to an already declared variable
+<variable_declaration> ::= "var" <type> <identifier> "=" <expression>
+<constant_declaration> ::= "const" <type> <identifier> "=" <expression>
 
-<compound_assignment> ::= <identifier> <compound_operator> <expression>   # affecting a value to an already declared variable, using operators ("+=", "-=", ...)
+<type> ::= "int" | "float" | "bool" | "string" | "color"
 
-<compound_operator> ::= "+=" | "-=" | "*=" | "/="  # available affectation operators
+<assignment> ::= <identifier> "=" <expression>
+<compound_assignment> ::= <identifier> <compound_operator> <expression>
+<compound_operator> ::= "+=" | "-=" | "*=" | "/="
 
-<if_statement> ::= "if" "(" <condition> ")" "{" <statement_list> "}" [ <elif_chain> ] [ "else" "{" <statement_list> "}" ] 
-# no semicolon needed until the end of the statement ! e.g. 'if(){};', 'if(){} elif(){} else{}';
+<if_statement> ::= "if" "(" <condition> ")" "{" <statement_list> "}"
+                  [ <elif_chain> ]
+                  [ "else" "{" <statement_list> "}" ]
 
 <elif_chain> ::= "elif" "(" <condition> ")" "{" <statement_list> "}" [ <elif_chain> ]
-# if, infinite elifs, else, ';'
 
-<loop_statement> ::= <for_loop> | <while_loop> # we have either for or while loopg
+<loop_statement> ::= <for_loop> | <while_loop>
 
-<for_loop> ::= "for" "(" [ <variable_declaration> ] ";" <condition> ";" [ <assignment> ] ")" "{" <statement_list> "}"   # for loop : the only mandatory parameter being the condition 
-# (e. g.) writing "for( ;<condition>; ){}" is allowed
+<for_loop> ::= "for" "(" [ <variable_declaration> ] ";" <condition> ";" [ <assignment> ] ")"
+               "{" <statement_list> "}"
 
-<while_loop> ::= "while" "(" <condition> ")" "{" <statement_list> "}"   # while loop with cond
+<while_loop> ::= "while" "(" <condition> ")" "{" <statement_list> "}"
 
-<condition> ::= <expression> <relational_operator> <expression> | <expression> # a condition can either a comparison or a term (interpreted as boolean)
+<cursor_statement> ::= <cursor_creation>
+                    | <cursor_movement>
+                    | <cursor_style>
+                    | <cursor_visibility>
 
-<expression> ::= <term> | <term> <operator> <expression>  # an expression can be either a term or an operation : e.g. "const x = a + b;"
+<cursor_creation> ::= "cursor" <identifier> "=" "create_cursor" "(" <expression> "," <expression> ")"
 
-<term> ::= <identifier> | <number>  # a term can either be a variable name or a number
+<cursor_movement> ::= <identifier> "." ( <move> | <rotate> | <position> )
+<move> ::= "move" "(" <expression> ")"
+<rotate> ::= "rotate" "(" <expression> ")"
+<position> ::= "position" "(" <expression> "," <expression> ")"
 
+<cursor_style> ::= <identifier> "." ( <color> | <thickness> )
+<color> ::= "color" "(" <color_value> ")"
+<thickness> ::= "thickness" "(" <expression> ")"
 
-# presets
-#cursor
-<cursor_statement> ::= "cursor." ( <cursor_status> | <cursor_orientation> | <cursor_move> | <cursor_position> | <cursor_styles> )
+<cursor_visibility> ::= <identifier> "." "visible" "(" <bool_value> ")"
 
-<cursor_status> ::= "status" "(" <expression> ")" # sets the status, either currently drawing or not
+<shape_statement> ::= <identifier> "." <shape_type>
 
-<cursor_orientation> ::= "orientation" "(" <expression> ")" # choose an angle (360°, follow trigonometric circle)
+<shape_type> ::= <draw_line> | <draw_rectangle> | <draw_circle> | <draw_triangle> | <draw_ellipse>
 
-<cursor_move> ::= "move" "(" <expression> ")" # moves from an amount of pixels based on the orientation
+<draw_line> ::= "draw_line" "(" <expression> ")"
 
-<cursor_position> ::= "position" "(" <expression> "," <expression> ")" # set a new position for the cursor : can draw between current position and inputed one if it's set as currently drawing
+<draw_rectangle> ::= "draw_rectangle" "(" <expression> "," <expression> "," <bool_value> ")"
 
-<cursor_styles> ::= "styles." <cursor_thickness> | <cursor_color> # cursor styles
+<draw_circle> ::= "draw_circle" "(" <expression> "," <bool_value> ")"
 
-<cursor_thickness> ::= "thickness" "(" <expression> ")" # set a thickness
+<draw_triangle> ::= "draw_triangle" "(" <expression> "," <expression> "," <bool_value> ")"
 
-<cursor_color> ::= "color" "(" <color> ")" # color presets
+<draw_ellipse> ::= "draw_ellipse" "(" <expression> "," <expression> "," <bool_value> ")"
 
-#background
-<background_statement> ::= "background." ( <background_color> | <background_path> )
+<window_statement> ::= "window" "." ( <clear> | <update> )
+<clear> ::= "clear" "(" ")"
+<update> ::= "update" "(" ")"
 
-<background_color> ::= "color" "(" <color> ")" # set a background color based on presets
+<color_value> ::= <predefined_color> | <custom_color>
+<predefined_color> ::= "BLACK" | "WHITE" | "RED" | "GREEN" | "BLUE"
+                    | "GRAY" | "LIGHT_GRAY" | "DARK_GRAY"
+                    | "ORANGE" | "BROWN" | "PINK" | "CORAL" | "GOLD"
+                    | "PURPLE" | "INDIGO" | "TURQUOISE" | "NAVY" | "TEAL"
+                    | "FOREST_GREEN" | "SKY_BLUE" | "OLIVE" | "SALMON" | "BEIGE"
+<custom_color> ::= "rgb" "(" <expression> "," <expression> "," <expression> ")"
 
-<background_path> ::= "path" "(" <string> ")" # set a file as a background image
+<expression> ::= <term> | <term> <operator> <expression>
+<term> ::= <identifier> | <number> | <bool_value> | <string_value>
 
-#presets
-<preset_statement> ::= "preset." ( <preset_square> | <preset_rectangle> | <preset_star> | <preset_circle> | <preset_triangle> )
+<condition> ::= <expression> <relational_operator> <expression>
+              | <bool_value>
+              | <identifier>
 
-<preset_square> ::= "square" "(" <number> ")"
+<operator> ::= "+" | "-" | "*" | "/" | "%"
+<relational_operator> ::= "<" | "<=" | ">" | ">=" | "==" | "!="
 
-<preset_rectangle> ::= "rectangle" "(" <number> "," <number> ")" # length, width
+<bool_value> ::= "true" | "false"
 
-<preset_star> ::= "star" "(" <number> ")"
+<comment> ::= <single_line_comment> | <multi_line_comment>
+<single_line_comment> ::= "//" <text> <newline>
+<multi_line_comment> ::= "/*" <text> "*/"
 
-<preset_circle> ::= "circle" "(" <number> "," <number> "," <number> ")" # radius r, coords (x, y)
-
-<preset_triangle> ::= "triangle" "(" <number> ")" # equilateral triangles 
-
-
-# low level identifiers, operators...
-
-<relational_operator> ::= "<" | "<=" | ">" | ">=" | "==" | "!="  # comparing operators
-<operator> ::= "+" | "-" | "*" | "/" | "%" # math operators
-
-<identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*  # identifier (variable names) can start by letters or an underscore, and contains letters, underscores, numbers.
-# e.g. '_hello' is allowed, '69hello' isn't allowed
-
-<number> ::= [0-9]+ ("." [0-9]+)?  # numbers can either be integers or floats with a point
-
-<color> ::= "red" | "blue" | "green" | "yellow" | "white" | "black" | "orange" 
-#FIXME : add new colors based on C library
+<identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*
+<number> ::= [0-9]+ ( "." [0-9]+ )?
+<string_value> ::= "\"" <text> "\""
+<text> ::= [^"]*
+<newline> ::= "\n" | "\r\n"

@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <math.h>
 
+// gcc main.c -o drawpp -I./SDL2/include -L./SDL2/lib -lSDL2 -lm
+
+
 // Constants for the window size and mathematical calculations
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
