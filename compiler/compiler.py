@@ -7,6 +7,13 @@ from compiler.codegen.codegen import CodeGenerator
 
 
 class CompilationError(Exception):
+    """
+    @brief Exception class for handling compilation errors.
+
+    @param phase The phase of the compilation process where the error occurred.
+    @param message A description of the error.
+    """
+
     def __init__(self, phase, message):
         self.phase = phase
         self.message = message
@@ -14,91 +21,138 @@ class CompilationError(Exception):
 
 
 class Compiler:
+    """
+    @brief Main compiler class for processing Draw++ files and generating C code.
+
+    This class performs lexical analysis, syntax analysis, semantic analysis,
+    and code generation for Draw++ source files.
+    """
+
     def __init__(self):
+        """
+        @brief Initializes the Compiler instance with placeholders for tokens and AST.
+        """
         self.tokens = None
         self.ast = None
 
     def compile(self, input_file, output_file=None):
-        try:
-            # Vérification de l'extension
-            if not input_file.endswith('.dpp'):
-                raise CompilationError("Input", "Le fichier source doit avoir l'extension .dpp")
+        """
+        @brief Compiles a Draw++ source file into a C source file.
 
-            # Lecture du fichier source
-            print(f"\n[1/5] Lecture du fichier source: {input_file}")
+        @param input_file The path to the Draw++ source file (.dpp).
+        @param output_file Optional path to the output C source file (.c).
+        @return True if compilation succeeds, False otherwise.
+        """
+        try:
+            # Verify file extension
+            if not input_file.endswith('.dpp'):
+                raise CompilationError("Input", "The source file must have a .dpp extension")
+
+            # Read the source file
+            print(f"\n[1/5] Reading source file: {input_file}")
             with open(input_file, 'r') as f:
                 source_code = f.read()
 
-            # Analyse lexicale
-            print("\n[2/5] Analyse lexicale...")
+            # Lexical analysis
+            print("\n[2/5] Performing lexical analysis...")
             self.tokens = self._lexical_analysis(source_code)
-            print("✓ Analyse lexicale réussie")
-            print(f"Nombre de tokens: {len(self.tokens)}")
+            print("✓ Lexical analysis completed successfully")
+            print(f"Number of tokens: {len(self.tokens)}")
 
-            # Analyse syntaxique
-            print("\n[3/5] Analyse syntaxique...")
+            # Syntax analysis
+            print("\n[3/5] Performing syntax analysis...")
             self.ast = self._syntax_analysis(self.tokens)
-            print("✓ Analyse syntaxique réussie")
-            print(f"Nombre de déclarations: {len(self.ast.statements)}")
+            print("✓ Syntax analysis completed successfully")
+            print(f"Number of statements: {len(self.ast.statements)}")
 
-            # Analyse sémantique
-            print("\n[4/5] Analyse sémantique...")
+            # Semantic analysis
+            print("\n[4/5] Performing semantic analysis...")
             success, error = self._semantic_analysis(self.ast)
             if not success:
                 raise CompilationError("Semantic", error)
-            print("✓ Analyse sémantique réussie")
+            print("✓ Semantic analysis completed successfully")
 
-            # Génération de code
-            print("\n[5/5] Génération de code...")
+            # Code generation
+            print("\n[5/5] Generating code...")
             if output_file is None:
                 output_file = os.path.splitext(input_file)[0] + '.c'
 
             self._generate_code(self.ast, output_file)
-            print(f"✓ Code C généré avec succès: {output_file}")
+            print(f"✓ C code generated successfully: {output_file}")
 
-            print("\n✨ Compilation terminée avec succès!")
+            print("\n✨ Compilation completed successfully!")
             return True
 
         except FileNotFoundError:
-            print(f"\n❌ Erreur: Fichier non trouvé: {input_file}")
+            print(f"\n❌ Error: File not found: {input_file}")
             return False
         except CompilationError as e:
-            print(f"\n❌ Erreur de compilation ({e.phase}): {e.message}")
+            print(f"\n❌ Compilation error ({e.phase}): {e.message}")
             return False
         except Exception as e:
-            print(f"\n❌ Erreur inattendue: {str(e)}")
+            print(f"\n❌ Unexpected error: {str(e)}")
             import traceback
             traceback.print_exc()
             return False
 
     def _lexical_analysis(self, source_code):
+        """
+        @brief Performs lexical analysis on the source code.
+
+        @param source_code The source code to tokenize.
+        @return A list of tokens generated from the source code.
+        """
         lexer = Lexer(source_code)
         return lexer.tokenize()
 
     def _syntax_analysis(self, tokens):
+        """
+        @brief Performs syntax analysis on the tokens.
+
+        @param tokens The tokens generated from lexical analysis.
+        @return An Abstract Syntax Tree (AST) representing the program.
+        """
         parser = Parser(tokens)
         return parser.parse()
 
     def _semantic_analysis(self, ast):
+        """
+        @brief Performs semantic analysis on the Abstract Syntax Tree.
+
+        @param ast The Abstract Syntax Tree to analyze.
+        @return A tuple (success, error), where success is a boolean indicating
+        whether the analysis succeeded, and error is the error message (if any).
+        """
         return analyze(ast)
 
     def _generate_code(self, ast, output_file):
+        """
+        @brief Generates C code from the Abstract Syntax Tree and writes it to a file.
+
+        @param ast The Abstract Syntax Tree representing the program.
+        @param output_file The path to the output C file.
+        """
         generator = CodeGenerator()
-        code = generator.generate(ast)  # Utilisation de la méthode generate(ast) qui renvoie une chaîne de caractères
+        code = generator.generate(ast)  # Generate C code as a string
         os.makedirs(os.path.dirname(os.path.abspath(output_file)), exist_ok=True)
         with open(output_file, 'w') as f:
             f.write(code)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compilateur Draw++")
-    parser.add_argument('input', help='Fichier source Draw++ (.dpp)')
-    parser.add_argument('-o', '--output', help='Fichier de sortie C (.c)')
+    """
+    @brief Entry point for the Draw++ compiler.
+
+    Parses command-line arguments and compiles the specified Draw++ source file.
+    """
+    parser = argparse.ArgumentParser(description="Draw++ Compiler")
+    parser.add_argument('input', help='Draw++ source file (.dpp)')
+    parser.add_argument('-o', '--output', help='Output C file (.c)')
     args = parser.parse_args()
 
-    print(f"Répertoire de travail : {os.getcwd()}")
+    print(f"Working directory: {os.getcwd()}")
     input_file = os.path.abspath(args.input)
-    print(f"Fichier d'entrée : {input_file}")
+    print(f"Input file: {input_file}")
 
     compiler = Compiler()
     success = compiler.compile(input_file, args.output)
@@ -106,4 +160,7 @@ def main():
 
 
 if __name__ == "__main__":
+    """
+    @brief Executes the main function to start the compilation process.
+    """
     main()
