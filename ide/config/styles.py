@@ -1,5 +1,5 @@
 from tkinter import ttk
-from ide.config.settings import THEME_COLORS
+from config.settings import THEME_COLORS
 
 
 def apply_styles():

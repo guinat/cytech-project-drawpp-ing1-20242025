@@ -8,6 +8,7 @@ setup(
     entry_points={
         'console_scripts': [
             'drawpp=compiler.compiler:main',
+            'drawpp-ide=ide.main:main',
         ],
     },
 )

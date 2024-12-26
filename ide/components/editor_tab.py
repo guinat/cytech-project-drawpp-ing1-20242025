@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from ide.config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
-from ide.utils.error_analyzer import ErrorAnalyzer
+from config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
+from utils.error_analyzer import ErrorAnalyzer
 
 
 class ErrorHighlighter:
