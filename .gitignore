@@ -1,19 +1,19 @@
-# Dossiers d'IDE
+# ide files
 .idea/
 .vscode/
 *.sublime*
 
-# Caches Python
+# python caches
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Environnements virtuels
+# virtual environments
 venv/
 env/
 
-# Fichiers temporaires et de log
+# temp / log files
 *.log
 *.swp
 *.bak
@@ -21,5 +21,5 @@ env/
 .DS_Store
 Thumbs.db
 
-# Autres fichiers spécifiques
-*.pdf  # Exclure les fichiers PDF comme SujetPython_GI_2024.pdf
+# other files
+*.pdf # project subject or any other pdf file
