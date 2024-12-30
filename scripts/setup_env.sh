@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Obtient le chemin du répertoire racine du projet
+# get root project directory path
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-# Ajoute le répertoire du projet au PYTHONPATH
+# add project root to PYTHONPATH
 export PYTHONPATH=$PYTHONPATH:$PROJECT_ROOT
 
-# Message de confirmation
-echo "PYTHONPATH mis à jour : $PYTHONPATH"
-echo "Vous pouvez maintenant exécuter le compilateur depuis le dossier compiler/"
+echo "PYTHONPATH updated : $PYTHONPATH"
+echo "Yoou can now launch compiler from compiler/ folder"

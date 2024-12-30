@@ -1,9 +1,9 @@
 import os
 import argparse
-from lexer.lexer import Lexer
-from parser.parser import Parser
-from semantic.semantic_analyzer import SemanticAnalyzer, SemanticError, analyze
-from codegen.codegen import CodeGenerator
+from compiler.lexer.lexer import Lexer
+from compiler.parser.parser import Parser
+from compiler.semantic.semantic_analyzer import SemanticAnalyzer, SemanticError, analyze
+from compiler.codegen.codegen import CodeGenerator
 
 
 class CompilationError(Exception):

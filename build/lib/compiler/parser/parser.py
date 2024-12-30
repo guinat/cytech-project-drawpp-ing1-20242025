@@ -1,5 +1,5 @@
-from lexer.tokens import TokenType
-from parser.syntax_tree import *
+from compiler.lexer.tokens import TokenType
+from compiler.parser.syntax_tree import *
 
 class Parser:
     """

@@ -1,5 +1,5 @@
-from ide.utils.file_manager import new_file, open_file, save_file, close_tab
-from ide.config.settings import SHORTCUTS
+from utils.file_manager import new_file, open_file, save_file, close_tab
+from config.settings import SHORTCUTS
 
 
 def configure_keyboard_shortcuts(root, notebook, add_tab_callback):

@@ -1,4 +1,4 @@
-from lexer.tokens import TokenType
+from compiler.lexer.tokens import TokenType
 import os
 import json
 

@@ -1,4 +1,4 @@
-from lexer.tokens import Token, TokenType
+from compiler.lexer.tokens import Token, TokenType
 
 class Lexer:
     """
