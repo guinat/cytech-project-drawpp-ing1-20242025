@@ -25,7 +25,10 @@ Thumbs.db
 test_program
 SOURCES.txt
 top_level.txt
+dependency_links.txt
+entry_points.txt
 drawpp_compiler-0.1-py3.12.egg
+PKG-INFO
 
 # other files
 *.pdf # project subject or any other pdf file
