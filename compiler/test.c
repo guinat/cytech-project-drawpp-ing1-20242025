@@ -1,4 +1,4 @@
-#include "../lib/DPP/include/drawpp.h"
+#include "drawpp.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>

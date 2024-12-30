@@ -21,6 +21,11 @@ env/
 .DS_Store
 Thumbs.db
 
+# compilation files
+test_program
+SOURCES.txt
+top_level.txt
+drawpp_compiler-0.1-py3.12.egg
+
 # other files
 *.pdf # project subject or any other pdf file
-test_program
