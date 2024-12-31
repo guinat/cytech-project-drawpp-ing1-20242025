@@ -1,10 +1,12 @@
-from lexer.tokens import TokenType
-from parser.syntax_tree import *
+from compiler.lexer.tokens import TokenType
+from compiler.parser.syntax_tree import *
+
 
 class Parser:
     """
     @brief A class responsible for parsing tokens into an abstract syntax tree (AST).
     """
+
     def __init__(self, tokens):
         """
         @brief Initializes the parser with a list of tokens.
@@ -22,7 +24,8 @@ class Parser:
         @param message A custom error message.
         @throws Exception with details about the parsing error.
         """
-        raise Exception(f'Parser error at token {self.current_token}: {message}')
+        raise Exception(f'Parser error at token {
+                        self.current_token}: {message}')
 
     def eat(self, token_type):
         """
@@ -131,7 +134,8 @@ class Parser:
                 if name == 'window':
                     return self.window_call(method_token)
                 else:
-                    self.error("Invalid window method call on non-window identifier")
+                    self.error(
+                        "Invalid window method call on non-window identifier")
             elif self.is_cursor_method_type(method_token.type):
                 method_name = method_token.value
                 self.eat(method_token.type)
@@ -474,7 +478,8 @@ class Parser:
         ]
 
         if self.current_token.type not in valid_types:
-            self.error(f"Expected type specifier (int, float, bool, string, color), got {self.current_token.type}")
+            self.error(f"Expected type specifier (int, float, bool, string, color), got {
+                       self.current_token.type}")
 
         var_type = self.current_token.type
         self.eat(var_type)

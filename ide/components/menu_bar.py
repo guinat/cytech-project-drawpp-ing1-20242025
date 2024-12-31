@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from utils.file_manager import new_file, open_file, save_file, close_tab
+from ide.utils.file_manager import new_file, open_file, save_file, close_tab
 
 
 def create_menu_bar(root, notebook, add_tab_callback):
@@ -16,17 +16,21 @@ def create_menu_bar(root, notebook, add_tab_callback):
 
     # "File" menu
     file_menu = tk.Menu(menubar, tearoff=0)
-    file_menu.add_command(label="New", command=lambda: new_file(notebook, add_tab_callback))
-    file_menu.add_command(label="Open", command=lambda: open_file(notebook, add_tab_callback))
+    file_menu.add_command(
+        label="New", command=lambda: new_file(notebook, add_tab_callback))
+    file_menu.add_command(
+        label="Open", command=lambda: open_file(notebook, add_tab_callback))
     file_menu.add_command(label="Save", command=lambda: save_file(notebook))
-    file_menu.add_command(label="Close Tab", command=lambda: close_tab(notebook))
+    file_menu.add_command(
+        label="Close Tab", command=lambda: close_tab(notebook))
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.quit)
     menubar.add_cascade(label="File", menu=file_menu)
 
     # "Run" menu
     run_menu = tk.Menu(menubar, tearoff=0)
-    run_menu.add_command(label="Run", command=lambda: print("Running the code..."))  # Simple example
+    run_menu.add_command(label="Run", command=lambda: print(
+        "Running the code..."))  # Simple example
     menubar.add_cascade(label="Run", menu=run_menu)
 
     # "Help" menu

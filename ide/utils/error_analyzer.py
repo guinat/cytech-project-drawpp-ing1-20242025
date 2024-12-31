@@ -125,7 +125,8 @@ class ErrorAnalyzer:
         suggestions = []
 
         if "not declared" in error_msg:
-            var_name = error_msg.split("'")[1] if "'" in error_msg else error_msg.split()[1]
+            var_name = error_msg.split(
+                "'")[1] if "'" in error_msg else error_msg.split()[1]
             suggestions.extend([
                 f"var int {var_name} = 0;",
                 f"var float {var_name} = 0.0;",
@@ -196,6 +197,7 @@ class ErrorAnalyzer:
         elif "unterminated string" in error_msg:
             suggestions.append("Add closing quotation mark (\")")
         else:
-            suggestions.append("Check syntax and ensure all statements end with semicolon (;)")
+            suggestions.append(
+                "Check syntax and ensure all statements end with semicolon (;)")
 
         return suggestions
