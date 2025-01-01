@@ -24,6 +24,7 @@ Thumbs.db
 # other files
 *.pdf # project subject or any other pdf file
 test_program
+*.bmp
 
 #setuptools
 cytech_project_drawpp_ing1_20242025.egg-info/
