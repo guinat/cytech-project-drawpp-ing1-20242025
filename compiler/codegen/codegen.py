@@ -106,17 +106,18 @@ class CodeGenerator:
         self.write_line("}")
         self.write_line()
 
-        # 3) Visite des statements => on crée les curseurs, on dessine, etc.
+        # 3) visit statements like creating cursors, drawing shapes, etc.
         for stmt in ast.statements:
             self.visit(stmt)
 
         self.write_line()
-        # 4) On présente le rendu une seule fois
+        # 4) render once
+        self.write_line('SDL_Delay(100);') # theres a render bug if we dont wait a bit
         self.write_line('printf("Presenting renderer...\\n");')
         self.write_line("SDL_RenderPresent(renderer);")
         self.write_line()
 
-        # 5) On capture l'image et on la sauvegarde
+        # 5) capture image and save it
         self.write_line('printf("Saving output image...\\n");')
         self.write_line("SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(")
         self.indent_level += 1

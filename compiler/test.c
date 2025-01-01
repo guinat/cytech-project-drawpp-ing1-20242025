@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
     cursor_draw_rectangle(cRed, bandWidth, flagHeight, true);
     SDL_RenderPresent(renderer);
     
+    SDL_Delay(100);
     printf("Presenting renderer...\n");
     SDL_RenderPresent(renderer);
     
