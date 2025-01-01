@@ -150,6 +150,7 @@ def main():
     parser = argparse.ArgumentParser(description="Draw++ Compiler")
     parser.add_argument('input', help='Draw++ source file (.dpp)')
     parser.add_argument('-o', '--output', help='Output C file (.c)')
+    parser.add_argument('--run', action='store_true', help='Run the generated program after compilation')
     args = parser.parse_args()
 
     print(f"Working directory: {os.getcwd()}")
@@ -158,6 +159,15 @@ def main():
 
     compiler = Compiler()
     success = compiler.compile(input_file, args.output)
+
+    if success and args.run:
+        output_file = args.output if args.output else os.path.splitext(input_file)[0] + '.c'
+        executable = os.path.splitext(output_file)[0]
+        print("\nCompiling the C file...")
+        os.system(f"gcc {output_file} -o {executable} -lSDL2")
+        print("\nRunning the executable...")
+        os.system(f"./{executable}")
+
     exit(0 if success else 1)
 
 

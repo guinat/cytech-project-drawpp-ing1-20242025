@@ -86,18 +86,18 @@ class CodeGenerator:
 
     def generate(self, ast):
         """
-        @brief Generates the C code for the given AST.
-
-        @param ast The abstract syntax tree representing the program.
-        @return The generated C code as a string.
+        Generates the C code with a single final render pass, captures the image, then quits.
         """
-        # Include headers from the configuration
+        # 1) Inclusions
         for header in self.config["headers"]:
             self.write_line(header)
         self.write_line()
 
+        # 2) main
         self.write_line("int main(int argc, char* argv[]) {")
         self.indent_level += 1
+
+        self.write_line('printf("Initializing SDL...\\n");')
         self.write_line("if (!initialize_SDL()) {")
         self.indent_level += 1
         self.write_line('printf("Failed to initialize SDL\\n");')
@@ -106,27 +106,57 @@ class CodeGenerator:
         self.write_line("}")
         self.write_line()
 
+        # 3) Visite des statements => on crée les curseurs, on dessine, etc.
         for stmt in ast.statements:
             self.visit(stmt)
 
         self.write_line()
-        self.write_line("// Event loop waiting for window closure")
-        self.write_line("bool running = true;")
-        self.write_line("SDL_Event event;")
-        self.write_line("while (running) {")
+        # 4) On présente le rendu une seule fois
+        self.write_line('printf("Presenting renderer...\\n");')
+        self.write_line("SDL_RenderPresent(renderer);")
+        self.write_line()
+
+        # 5) On capture l'image et on la sauvegarde
+        self.write_line('printf("Saving output image...\\n");')
+        self.write_line("SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(")
         self.indent_level += 1
-        self.write_line("while (SDL_PollEvent(&event)) {")
+        self.write_line("0, windowWidth, windowHeight, 32, SDL_PIXELFORMAT_RGBA8888);")
+        self.indent_level -= 1
+        self.write_line()
+        self.write_line("if (!surface) {")
         self.indent_level += 1
-        self.write_line("if (event.type == SDL_QUIT) {")
-        self.indent_level += 1
-        self.write_line("running = false;")
-        self.indent_level -= 1
-        self.write_line("}")
-        self.indent_level -= 1
-        self.write_line("}")
-        self.indent_level -= 1
-        self.write_line("}")
+        self.write_line('printf("Failed to create surface\\n");')
         self.write_line("cleanup_SDL();")
+        self.write_line("return 1;")
+        self.indent_level -= 1
+        self.write_line("}")
+        self.write_line()
+
+        self.write_line(
+            "if (SDL_RenderReadPixels(renderer, NULL, surface->format->format, surface->pixels, surface->pitch) != 0) {")
+        self.indent_level += 1
+        self.write_line('printf("Failed to read pixels: %s\\n", SDL_GetError());')
+        self.indent_level -= 1
+        self.write_line("}")
+        self.write_line("else if (SDL_SaveBMP(surface, \"output.bmp\") != 0) {")
+        self.indent_level += 1
+        self.write_line('printf("Failed to save BMP: %s\\n", SDL_GetError());')
+        self.indent_level -= 1
+        self.write_line("} else {")
+        self.indent_level += 1
+        self.write_line('printf("Image saved as output.bmp\\n");')
+        self.indent_level -= 1
+        self.write_line("}")
+        self.write_line()
+
+        self.write_line("SDL_FreeSurface(surface);")
+        self.write_line()
+
+        self.write_line('printf("Cleaning up...\\n");')
+        self.write_line("cleanup_SDL();")
+        self.write_line()
+
+        self.write_line('printf("Done!\\n");')
         self.write_line("return 0;")
         self.indent_level -= 1
         self.write_line("}")
@@ -225,9 +255,6 @@ class CodeGenerator:
         elif shape == "draw_ellipse":
             self.write_line(f"cursor_draw_ellipse({node.cursor_name}, {
                             params[0]}, {params[1]}, {params[2]});")
-
-        self.write_line("SDL_RenderPresent(renderer);")
-        self.write_line("SDL_Delay(1000);")
 
     def visit_WindowCommand(self, node):
         """
