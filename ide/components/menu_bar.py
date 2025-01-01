@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
+from ide.components.editor_tab import update_preview
 from ide.utils.file_manager import new_file, open_file, save_file, close_tab
-
+import os
 
 def create_menu_bar(root, notebook, add_tab_callback):
     """
@@ -29,8 +30,7 @@ def create_menu_bar(root, notebook, add_tab_callback):
 
     # "Run" menu
     run_menu = tk.Menu(menubar, tearoff=0)
-    run_menu.add_command(label="Run", command=lambda: print(
-        "Running the code..."))  # Simple example
+    run_menu.add_command(label="Run", command=lambda: run_code(notebook))
     menubar.add_cascade(label="Run", menu=run_menu)
 
     # "Help" menu
@@ -40,6 +40,51 @@ def create_menu_bar(root, notebook, add_tab_callback):
 
     # Attach the menu bar to the root window
     root.config(menu=menubar)
+
+def run_code(notebook):
+    """
+    @brief Compiles and executes the code in the editor, then updates the preview with the generated image.
+
+    @param notebook The ttk.Notebook widget containing the editor and preview.
+    """
+    current_tab = notebook.select()
+    current_frame = notebook.nametowidget(current_tab)
+    editor = getattr(current_frame, "editor", None)
+
+    if editor:
+        try:
+            # Extract the code from the editor
+            code = editor.get("1.0", "end-1c")
+
+            # Save the code to a temporary Draw++ source file
+            source_file = "temp.dpp"
+            with open(source_file, "w") as file:
+                file.write(code)
+
+            # Temporary output C file and executable name
+            output_file = "temp.c"
+            executable = "temp_program"
+
+            # Commands to compile Draw++ and C code
+            compile_drawpp_command = f"python -m compiler.compiler {source_file} -o {output_file}"
+            compile_c_command = f"gcc -I../lib/DPP/include -I../lib/SDL2/include -L../lib -o {executable} {output_file} -ldrawpp -lSDL2 -lm"
+            run_command = f"./{executable}"
+
+            # Compile Draw++ to C
+            if os.system(compile_drawpp_command) != 0:
+                return
+
+            # Compile the C code to an executable
+            if os.system(compile_c_command) == 0:
+                # Set the DISPLAY environment variable and execute the program
+                os.environ["DISPLAY"] = ":0"
+                os.system(run_command)
+
+                # Update the preview with the generated image
+                update_preview(current_frame, "output.bmp")
+
+        except Exception as e:
+            print(f"[ERROR] Exception during execution: {e}")
 
 
 def show_about_dialog():
