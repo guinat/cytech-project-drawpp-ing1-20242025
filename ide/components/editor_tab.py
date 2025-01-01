@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk  # Pour afficher l'image générée
 from ide.config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
 from ide.utils.error_analyzer import ErrorAnalyzer
 
@@ -355,6 +356,8 @@ def add_tab(notebook, title="Untitled"):
 
     frame.paned_window = paned_window
     frame.editor = editor
+    frame.preview_frame = preview_frame
+    frame.preview_label = preview_label
 
     notebook.add(frame, text=title)
     notebook.select(frame)
@@ -362,3 +365,22 @@ def add_tab(notebook, title="Untitled"):
     line_numbers.update_line_numbers()
 
     return editor, frame
+
+
+def update_preview(frame, image_path="output.bmp"):
+    """
+    @brief Updates the preview area with the generated image.
+    @param frame The frame containing the preview area.
+    @param image_path The path to the generated image.
+    """
+    try: #TODO: CHECK RESIZE
+        image = Image.open(image_path)
+        image = image.resize((300, 200), Image.Resampling.LANCZOS)  # Utilisez LANCZOS
+        photo = ImageTk.PhotoImage(image)
+
+        frame.preview_label.configure(image=photo, text="")
+        frame.preview_label.image = photo
+    except Exception as e:
+        frame.preview_label.configure(
+            text=f"Error displaying image: {str(e)}", image=""
+        )
