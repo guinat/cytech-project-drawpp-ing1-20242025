@@ -1,4 +1,5 @@
-from lexer.tokens import TokenType
+from compiler.lexer.tokens import TokenType
+
 
 class SemanticError(Exception):
     """
@@ -6,10 +7,12 @@ class SemanticError(Exception):
     """
     pass
 
+
 class SymbolTable:
     """
     @brief Represents a symbol table for storing variable and cursor declarations.
     """
+
     def __init__(self):
         """
         @brief Initializes the symbol table.
@@ -58,10 +61,12 @@ class SymbolTable:
         """
         return name in self.cursors
 
+
 class SemanticAnalyzer:
     """
     @brief Performs semantic analysis on an abstract syntax tree (AST).
     """
+
     def __init__(self):
         """
         @brief Initializes the semantic analyzer with an empty symbol table.
@@ -167,7 +172,8 @@ class SemanticAnalyzer:
         if node.init_value:
             init_type = self.visit(node.init_value)
             if not self.check_types(init_type, node.var_type):
-                raise SemanticError(f"Type mismatch in initialization of {node.name}")
+                raise SemanticError(
+                    f"Type mismatch in initialization of {node.name}")
 
     def visit_Assign(self, node):
         """
@@ -204,14 +210,17 @@ class SemanticAnalyzer:
         @param node The cursor method node.
         @throws SemanticError if the parameters do not match the expected types.
         """
-        expected_param_types = self.check_cursor_method(node.cursor_name, node.method_name)
+        expected_param_types = self.check_cursor_method(
+            node.cursor_name, node.method_name)
         if len(node.params) != len(expected_param_types):
-            raise SemanticError(f"Method {node.method_name} expects {len(expected_param_types)} parameters")
+            raise SemanticError(f"Method {node.method_name} expects {
+                                len(expected_param_types)} parameters")
 
         for param, expected_type in zip(node.params, expected_param_types):
             param_type = self.visit(param)
             if not self.check_types(param_type, expected_type):
-                raise SemanticError(f"Invalid parameter type for method {node.method_name}")
+                raise SemanticError(f"Invalid parameter type for method {
+                                    node.method_name}")
 
     def visit_DrawCommand(self, node):
         """
@@ -220,14 +229,17 @@ class SemanticAnalyzer:
         @param node The draw command node.
         @throws SemanticError if the parameters do not match the expected types.
         """
-        expected_param_types = self.check_cursor_method(node.cursor_name, node.shape_type)
+        expected_param_types = self.check_cursor_method(
+            node.cursor_name, node.shape_type)
         if len(node.params) != len(expected_param_types):
-            raise SemanticError(f"Shape {node.shape_type} expects {len(expected_param_types)} parameters")
+            raise SemanticError(f"Shape {node.shape_type} expects {
+                                len(expected_param_types)} parameters")
 
         for param, expected_type in zip(node.params, expected_param_types):
             param_type = self.visit(param)
             if not self.check_types(param_type, expected_type):
-                raise SemanticError(f"Invalid parameter type for shape {node.shape_type}")
+                raise SemanticError(
+                    f"Invalid parameter type for shape {node.shape_type}")
 
     def visit_WindowCommand(self, node):
         """
@@ -254,7 +266,8 @@ class SemanticAnalyzer:
         if node.op in [TokenType.PLUS, TokenType.MINUS, TokenType.MULT, TokenType.SLASH, TokenType.MODULO]:
             if left_type in [TokenType.INT, TokenType.FLOAT] and right_type in [TokenType.INT, TokenType.FLOAT]:
                 return TokenType.FLOAT if TokenType.FLOAT in [left_type, right_type] else TokenType.INT
-            raise SemanticError(f"Invalid operand types for arithmetic operation: {left_type} and {right_type}")
+            raise SemanticError(f"Invalid operand types for arithmetic operation: {
+                                left_type} and {right_type}")
 
         elif node.op in [TokenType.LESS, TokenType.LESS_EQUAL, TokenType.GREATER, TokenType.GREATER_EQUAL,
                          TokenType.EQUAL_EQUAL, TokenType.NOT_EQUAL]:
@@ -265,7 +278,8 @@ class SemanticAnalyzer:
                         (left_type == TokenType.BOOL_VALUE and right_type == TokenType.BOOL)):
                 return TokenType.BOOL_VALUE
 
-            raise SemanticError(f"Invalid operand types for comparison: {left_type} and {right_type}")
+            raise SemanticError(f"Invalid operand types for comparison: {
+                                left_type} and {right_type}")
 
         raise SemanticError(f"Unknown binary operator {node.op}")
 
@@ -399,6 +413,7 @@ def analyze(ast):
     except SemanticError as e:
         return False, str(e)
 
+
 if __name__ == "__main__":
     from compiler.lexer.lexer import Lexer
     from compiler.parser.parser import Parser
@@ -461,7 +476,8 @@ if __name__ == "__main__":
         ast = parser.parse()
         print("AST généré avec succès")
         print("\nStructure du programme:")
-        print(f"Nombre de déclarations au niveau racine: {len(ast.statements)}")
+        print(f"Nombre de déclarations au niveau racine: {
+              len(ast.statements)}")
 
         # Analyse sémantique
         print("\n" + "-" * 50)

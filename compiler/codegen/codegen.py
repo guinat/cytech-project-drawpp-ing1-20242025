@@ -1,12 +1,14 @@
-from lexer.tokens import TokenType
+from compiler.lexer.tokens import TokenType
 import os
 import json
+
 
 class CodeGenError(Exception):
     """
     @brief Custom exception class for code generation errors.
     """
     pass
+
 
 class CodeGenerator:
     """
@@ -184,13 +186,16 @@ class CodeGenerator:
             self.write_line(f"rotate_cursor({node.cursor_name}, {params[0]});")
 
         elif method == "color":
-            self.write_line(f"set_cursor_color({node.cursor_name}, {params[0]});")
+            self.write_line(
+                f"set_cursor_color({node.cursor_name}, {params[0]});")
 
         elif method == "thickness":
-            self.write_line(f"{node.cursor_name}->thickness = (int){params[0]};")
+            self.write_line(
+                f"{node.cursor_name}->thickness = (int){params[0]};")
 
         elif method == "visible":
-            self.write_line(f"set_cursor_visibility({node.cursor_name}, {params[0]});")
+            self.write_line(
+                f"set_cursor_visibility({node.cursor_name}, {params[0]});")
 
     def visit_DrawCommand(self, node):
         """
@@ -202,19 +207,24 @@ class CodeGenerator:
         shape = node.shape_type
 
         if shape == "draw_line":
-            self.write_line(f"cursor_draw_line({node.cursor_name}, {params[0]});")
+            self.write_line(
+                f"cursor_draw_line({node.cursor_name}, {params[0]});")
 
         elif shape == "draw_rectangle":
-            self.write_line(f"cursor_draw_rectangle({node.cursor_name}, {params[0]}, {params[1]}, {params[2]});")
+            self.write_line(f"cursor_draw_rectangle({node.cursor_name}, {
+                            params[0]}, {params[1]}, {params[2]});")
 
         elif shape == "draw_circle":
-            self.write_line(f"cursor_draw_circle({node.cursor_name}, {params[0]}, {params[1]});")
+            self.write_line(f"cursor_draw_circle({node.cursor_name}, {
+                            params[0]}, {params[1]});")
 
         elif shape == "draw_triangle":
-            self.write_line(f"cursor_draw_triangle({node.cursor_name}, {params[0]}, {params[1]}, {params[2]});")
+            self.write_line(f"cursor_draw_triangle({node.cursor_name}, {
+                            params[0]}, {params[1]}, {params[2]});")
 
         elif shape == "draw_ellipse":
-            self.write_line(f"cursor_draw_ellipse({node.cursor_name}, {params[0]}, {params[1]}, {params[2]});")
+            self.write_line(f"cursor_draw_ellipse({node.cursor_name}, {
+                            params[0]}, {params[1]}, {params[2]});")
 
         self.write_line("SDL_RenderPresent(renderer);")
         self.write_line("SDL_Delay(1000);")
@@ -226,7 +236,8 @@ class CodeGenerator:
         @param node The window command node specifying the action to perform.
         """
         if node.command == "clear":
-            self.write_line("SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);")
+            self.write_line(
+                "SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);")
             self.write_line("SDL_RenderClear(renderer);")
         elif node.command == "update":
             self.write_line("SDL_RenderPresent(renderer);")

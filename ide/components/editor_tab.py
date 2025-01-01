@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
-from utils.error_analyzer import ErrorAnalyzer
+from ide.config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
+from ide.utils.error_analyzer import ErrorAnalyzer
 
 
 class ErrorHighlighter:
@@ -167,15 +167,19 @@ class EnhancedText(tk.Text):
         if not code.strip():
             return
 
-        success, error_msg, suggestions = self.error_analyzer.analyze_code(code)
+        success, error_msg, suggestions = self.error_analyzer.analyze_code(
+            code)
 
         if not success:
-            line_num = self.error_analyzer._extract_line_number(error_msg, code)
-            self.highlighter.highlight_error(f"{line_num}.0", f"{line_num}.end", error_msg)
+            line_num = self.error_analyzer._extract_line_number(
+                error_msg, code)
+            self.highlighter.highlight_error(
+                f"{line_num}.0", f"{line_num}.end", error_msg)
 
             if suggestions and line_num in suggestions:
                 for suggestion in suggestions[line_num]:
-                    self.highlighter.add_suggestion(f"{line_num}.0", suggestion)
+                    self.highlighter.add_suggestion(
+                        f"{line_num}.0", suggestion)
 
     def _show_suggestion_menu(self, event):
         """
@@ -209,14 +213,16 @@ class EnhancedText(tk.Text):
                 menu.add_separator()
 
                 fix_menu = tk.Menu(menu, tearoff=0)
-                suggestions = self.highlighter.suggestion_tags.get(f"suggestion_{line_num}.0", [])
+                suggestions = self.highlighter.suggestion_tags.get(
+                    f"suggestion_{line_num}.0", [])
                 if isinstance(suggestions, str):
                     suggestions = [suggestions]
 
                 for suggestion in suggestions:
                     fix_menu.add_command(
                         label=suggestion,
-                        command=lambda s=suggestion: self._apply_suggestion(line_num, s),
+                        command=lambda s=suggestion: self._apply_suggestion(
+                            line_num, s),
                         foreground="green",
                         background="#eeffee"
                     )
@@ -259,11 +265,13 @@ class EnhancedText(tk.Text):
                     error_line = int(str(start_index).split('.')[0])
 
                     if error_line == line_num:
-                        error_msg = self.highlighter.error_tags.get(tag, "Syntax error")
+                        error_msg = self.highlighter.error_tags.get(
+                            tag, "Syntax error")
 
                         self.tooltip = tk.Toplevel(self)
                         self.tooltip.wm_overrideredirect(True)
-                        self.tooltip.wm_geometry(f"+{event.x_root + 10}+{event.y_root + 10}")
+                        self.tooltip.wm_geometry(
+                            f"+{event.x_root + 10}+{event.y_root + 10}")
 
                         label = tk.Label(
                             self.tooltip,
@@ -278,8 +286,10 @@ class EnhancedText(tk.Text):
                         )
                         label.pack()
 
-                        self.tooltip.bind('<Leave>', lambda e: self.tooltip.destroy())
-                        self.bind('<Leave>', lambda e: self.tooltip.destroy() if self.tooltip else None)
+                        self.tooltip.bind(
+                            '<Leave>', lambda e: self.tooltip.destroy())
+                        self.bind(
+                            '<Leave>', lambda e: self.tooltip.destroy() if self.tooltip else None)
                         break
                 except (IndexError, ValueError):
                     continue

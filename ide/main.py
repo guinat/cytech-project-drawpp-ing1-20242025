@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-from components.editor_tab import add_tab
-from components.menu_bar import create_menu_bar
-from utils.shortcuts import configure_keyboard_shortcuts
-from config.settings import APP_TITLE, APP_DIMENSIONS
-from config.styles import apply_styles
+from ide.components.editor_tab import add_tab
+from ide.components.menu_bar import create_menu_bar
+from ide.utils.shortcuts import configure_keyboard_shortcuts
+from ide.config.settings import APP_TITLE, APP_DIMENSIONS
+from ide.config.styles import apply_styles
 
 
 def main():

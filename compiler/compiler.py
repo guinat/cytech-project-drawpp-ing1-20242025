@@ -1,9 +1,9 @@
 import os
 import argparse
-from lexer.lexer import Lexer
-from parser.parser import Parser
-from semantic.semantic_analyzer import SemanticAnalyzer, SemanticError, analyze
-from codegen.codegen import CodeGenerator
+from compiler.lexer.lexer import Lexer
+from compiler.parser.parser import Parser
+from compiler.semantic.semantic_analyzer import SemanticAnalyzer, SemanticError, analyze
+from compiler.codegen.codegen import CodeGenerator
 
 
 class CompilationError(Exception):
@@ -46,7 +46,8 @@ class Compiler:
         try:
             # Verify file extension
             if not input_file.endswith('.dpp'):
-                raise CompilationError("Input", "The source file must have a .dpp extension")
+                raise CompilationError(
+                    "Input", "The source file must have a .dpp extension")
 
             # Read the source file
             print(f"\n[1/5] Reading source file: {input_file}")
@@ -134,7 +135,8 @@ class Compiler:
         """
         generator = CodeGenerator()
         code = generator.generate(ast)  # Generate C code as a string
-        os.makedirs(os.path.dirname(os.path.abspath(output_file)), exist_ok=True)
+        os.makedirs(os.path.dirname(
+            os.path.abspath(output_file)), exist_ok=True)
         with open(output_file, 'w') as f:
             f.write(code)
 

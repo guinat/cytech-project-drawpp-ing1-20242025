@@ -1,9 +1,11 @@
-from lexer.tokens import Token, TokenType
+from compiler.lexer.tokens import Token, TokenType
+
 
 class Lexer:
     """
     @brief A lexer class to tokenize source code into meaningful tokens.
     """
+
     def __init__(self, source_code):
         """
         @brief Initializes the lexer with the source code.
@@ -99,7 +101,8 @@ class Lexer:
             if self.current_char == '.':
                 decimal_points += 1
                 if decimal_points > 1:
-                    raise ValueError(f"Invalid number format at line {self.line}, column {self.column}")
+                    raise ValueError(f"Invalid number format at line {
+                                     self.line}, column {self.column}")
             number += self.current_char
             self.advance()
 
@@ -122,7 +125,8 @@ class Lexer:
             self.advance()
 
         if self.current_char != '"':
-            raise ValueError(f"Unterminated string at line {self.line}, column {self.column}")
+            raise ValueError(f"Unterminated string at line {
+                             self.line}, column {self.column}")
 
         self.advance()
         return TokenType.STRING, string
@@ -230,7 +234,8 @@ class Lexer:
                 ident = self.get_identifier()
 
                 token_type = keywords.get(ident, TokenType.IDENTIFIER)
-                tokens.append(Token(token_type, ident, start_line, start_column))
+                tokens.append(
+                    Token(token_type, ident, start_line, start_column))
 
                 while self.current_char == '.':
                     dot_line = self.line
@@ -242,24 +247,29 @@ class Lexer:
                         method_line = self.line
                         method_col = self.column
                         method_ident = self.get_identifier()
-                        method_token_type = keywords.get(method_ident, TokenType.IDENTIFIER)
-                        tokens.append(Token(method_token_type, method_ident, method_line, method_col))
+                        method_token_type = keywords.get(
+                            method_ident, TokenType.IDENTIFIER)
+                        tokens.append(
+                            Token(method_token_type, method_ident, method_line, method_col))
                     else:
-                        raise ValueError(f"Unexpected character after '.' at line {self.line}, column {self.column}")
+                        raise ValueError(f"Unexpected character after '.' at line {
+                                         self.line}, column {self.column}")
                 continue
 
             if self.current_char.isdigit():
                 start_line = self.line
                 start_column = self.column
                 token_type, value = self.get_number()
-                tokens.append(Token(token_type, value, start_line, start_column))
+                tokens.append(
+                    Token(token_type, value, start_line, start_column))
                 continue
 
             if self.current_char == '"':
                 start_line = self.line
                 start_column = self.column
                 token_type, value = self.get_string()
-                tokens.append(Token(token_type, value, start_line, start_column))
+                tokens.append(
+                    Token(token_type, value, start_line, start_column))
                 continue
 
             if self.current_char in '+-*/<>=!':
@@ -267,7 +277,8 @@ class Lexer:
                 start_column = self.column
                 token_type, value = self.get_operator()
                 if token_type:
-                    tokens.append(Token(token_type, value, start_line, start_column))
+                    tokens.append(
+                        Token(token_type, value, start_line, start_column))
                     continue
 
             delimiters = {
@@ -283,14 +294,17 @@ class Lexer:
                 start_line = self.line
                 start_column = self.column
                 token_type = delimiters[self.current_char]
-                tokens.append(Token(token_type, self.current_char, start_line, start_column))
+                tokens.append(
+                    Token(token_type, self.current_char, start_line, start_column))
                 self.advance()
                 continue
 
-            raise ValueError(f"Unexpected character '{self.current_char}' at line {self.line}, column {self.column}")
+            raise ValueError(f"Unexpected character '{self.current_char}' at line {
+                             self.line}, column {self.column}")
 
         tokens.append(Token(TokenType.EOF, None, self.line, self.column))
         return tokens
+
 
 def main():
     """
@@ -333,6 +347,7 @@ def main():
         print(f"Erreur lors de l'analyse lexicale : {e}")
     except Exception as e:
         print(f"Erreur inattendue : {e}")
+
 
 if __name__ == "__main__":
     main()
