@@ -78,7 +78,10 @@ def close_tab(notebook):
     editor = getattr(current_frame, "editor", None)
 
     if editor and editor.get("1.0", "end-1c").strip():
-        if messagebox.askyesnocancel("Close Tab", "Do you want to save changes before closing?"):
+        result = messagebox.askyesnocancel("Close Tab", "Do you want to save changes before closing?")
+        if result is None:  # Cancel
+            return
+        elif result:  # Yes
             save_file(notebook)
 
     notebook.forget(current_tab)
