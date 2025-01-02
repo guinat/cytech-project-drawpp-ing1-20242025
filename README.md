@@ -111,7 +111,8 @@ To begin with Draw++, follow the steps below to set up your environment and star
 6. Launch the IDE:
 
 ```sh
-  cd ide && python3 main.py
+  cd ide
+  python3 main.py
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
