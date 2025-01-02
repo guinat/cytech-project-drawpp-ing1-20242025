@@ -92,8 +92,8 @@ To begin with Draw++, follow the steps below to set up your environment and star
 
 - **Linux/macOS**:
   ```sh
-  python3 -m venv env
-  source env/bin/activate
+  python3 -m venv venv
+  source venv/bin/activate
   ```
 
 4. Install required dependencies:
