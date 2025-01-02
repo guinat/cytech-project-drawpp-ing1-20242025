@@ -1,0 +1,17 @@
+var int windowWidth = 800;
+var int windowHeight = 600;
+
+var int size = windowWidth / 3;
+var color myColor = rgb(5, 10, 231);
+
+cursor cBlue = create_cursor(0, 0);
+cBlue.color(myColor);
+cBlue.draw_rectangle(size, windowWidth, true);
+
+cursor cWhite = create_cursor(size, 0);
+cWhite.color(WHITE);
+cWhite.draw_rectangle(size, windowWidth, true);
+
+cursor cRed = create_cursor(2 * size, 0);
+cRed.color(RED);
+cRed.draw_rectangle(size, windowWidth, true);

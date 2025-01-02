@@ -33,5 +33,4 @@ dist/
 build/
 
 #exception
-!example/
-!example/*.bmp
+!example/**

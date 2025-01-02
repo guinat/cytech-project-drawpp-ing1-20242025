@@ -1,0 +1,7 @@
+var int windowWidth = 800;
+var int windowHeight = 600;
+
+cursor c1 = create_cursor((windowWidth / 2) - 100, (windowHeight / 2) - 100);
+
+c1.color(FOREST_GREEN);
+c1.draw_rectangle(200,200, false);
