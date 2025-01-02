@@ -429,9 +429,15 @@ class Parser:
             self.eat(TokenType.BOOL_VALUE)
             return BooleanLiteral(token.value)
 
+
         elif token.type in [TokenType.RED, TokenType.GREEN, TokenType.BLUE,
                             TokenType.BLACK, TokenType.WHITE, TokenType.GRAY,
-                            TokenType.ORANGE, TokenType.PURPLE]:
+                            TokenType.LIGHT_GRAY, TokenType.DARK_GRAY,
+                            TokenType.ORANGE, TokenType.BROWN, TokenType.PINK,
+                            TokenType.CORAL, TokenType.GOLD, TokenType.PURPLE,
+                            TokenType.INDIGO, TokenType.TURQUOISE, TokenType.NAVY,
+                            TokenType.TEAL, TokenType.FOREST_GREEN, TokenType.SKY_BLUE,
+                            TokenType.OLIVE, TokenType.SALMON, TokenType.BEIGE]:
             color_name = token.value
             self.eat(token.type)
             return ColorValue(color_name=color_name)

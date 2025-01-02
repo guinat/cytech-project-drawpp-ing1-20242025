@@ -31,3 +31,7 @@ temp*
 cytech_project_drawpp_ing1_20242025.egg-info/
 dist/
 build/
+
+#exception
+!example/
+!example/*.bmp

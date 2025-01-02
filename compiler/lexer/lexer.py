@@ -213,8 +213,23 @@ class Lexer:
             'BLACK': TokenType.BLACK,
             'WHITE': TokenType.WHITE,
             'GRAY': TokenType.GRAY,
+            'LIGHT_GRAY': TokenType.LIGHT_GRAY,
+            'DARK_GRAY': TokenType.DARK_GRAY,
             'ORANGE': TokenType.ORANGE,
-            'PURPLE': TokenType.PURPLE
+            'BROWN': TokenType.BROWN,
+            'PINK': TokenType.PINK,
+            'CORAL': TokenType.CORAL,
+            'GOLD': TokenType.GOLD,
+            'PURPLE': TokenType.PURPLE,
+            'INDIGO': TokenType.INDIGO,
+            'TURQUOISE': TokenType.TURQUOISE,
+            'NAVY': TokenType.NAVY,
+            'TEAL': TokenType.TEAL,
+            'FOREST_GREEN': TokenType.FOREST_GREEN,
+            'SKY_BLUE': TokenType.SKY_BLUE,
+            'OLIVE': TokenType.OLIVE,
+            'SALMON': TokenType.SALMON,
+            'BEIGE': TokenType.BEIGE,
         }
 
         while self.current_char is not None:
