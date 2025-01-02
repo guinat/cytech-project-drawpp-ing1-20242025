@@ -29,10 +29,6 @@
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#language-features">Language Features</a></li>
     <li><a href="#ide-features">IDE Features</a></li>
-    <li><a href="#folder-structure">Folder Structure</a></li>
-    <li><a href="#dependencies">Dependencies</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
   </ol>
 </details>
 
