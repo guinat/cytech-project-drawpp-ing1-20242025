@@ -9,4 +9,3 @@ cursor c2 = create_cursor((windowWidth / 2) - 100, (windowHeight / 2) - 100);
 c2.rotate(180);
 c2.color(CORAL);
 c2.draw_triangle(200,200, true);
-

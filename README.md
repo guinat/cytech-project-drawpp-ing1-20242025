@@ -69,37 +69,50 @@ To begin with Draw++, follow the steps below to set up your environment and star
 
 ### Installation
 
+
 1. Clone the repository:
 
-   ```sh
-   git clone https://github.com/guinat/cytech-project-drawpp-ing1-20242025.git
-   ```
+```sh
+  git clone https://github.com/guinat/cytech-project-drawpp-ing1-20242025.git
+```
 
 2. Navigate to the project directory:
 
-   ```sh
-   cd cytech-project-drawpp-ing1-20242025
-   ```
+```sh
+  cd cytech-project-drawpp-ing1-20242025
+```
 
-3. Install any required dependencies:
+3. Create a virtual environment:
 
-   ```sh
-   pip install -r requirements.txt
-   ```
+- **Windows**:
+  ```sh
+  python -m venv env
+  env\Scripts\activate
+  ```
 
+- **Linux/macOS**:
+  ```sh
+  python3 -m venv env
+  source env/bin/activate
+  ```
 
-4. Install the project using the setup script:
+4. Install required dependencies:
 
-   ```sh
-   python setup.py install
-   ```
+```sh
+  pip install -r requirements.txt
+```
 
+5. Install the project in editable mode:
 
-5. Launch the IDE:
+```sh
+  pip install -e .
+```
 
-   ```sh
-   python -m ide.main
-   ```
+6. Launch the IDE:
+
+```sh
+  cd ide && python3 main.py
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
