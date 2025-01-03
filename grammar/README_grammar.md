@@ -37,7 +37,7 @@ Draw++ supports the following data types:
 ---
 
 ## **Keywords**
-Explaining here special keywords `cursor` and `window`.
+Explaining here special keyword `cursor`.
 
 ### **Cursor**
 The cursor is the central object used for drawing. It is a special variable type.
@@ -72,7 +72,3 @@ Shapes are drawn using methods of the cursor variable:
 ### **Color Values**
 - Predefined colors: `RED`, `GREEN`, `BLUE`, etc. Find a full list in [this file](https://github.com/guinat/cytech-project-drawpp-ing1-20242025/blob/main/grammar/drawpp_grammar.bnf).
 - Custom colors: `rgb(r, g, b)` where `r`, `g`, `b` are integers between 0-255.
-
-### **Window management**
-- `window.clear();` empties the sheet
-- `window.update();` renders the sheet

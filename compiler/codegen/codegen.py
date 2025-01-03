@@ -257,19 +257,6 @@ class CodeGenerator:
             self.write_line(f"cursor_draw_ellipse({node.cursor_name}, {
                             params[0]}, {params[1]}, {params[2]});")
 
-    def visit_WindowCommand(self, node):
-        """
-        @brief Generates code for window-related commands (e.g., clear or update).
-
-        @param node The window command node specifying the action to perform.
-        """
-        if node.command == "clear":
-            self.write_line(
-                "SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);")
-            self.write_line("SDL_RenderClear(renderer);")
-        elif node.command == "update":
-            self.write_line("SDL_RenderPresent(renderer);")
-
     def visit_If(self, node):
         """
         @brief Generates code for an if statement.

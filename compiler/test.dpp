@@ -9,8 +9,6 @@ var int bandWidth = flagWidth / 3;
 var int startX = (windowWidth - flagWidth) / 2;
 var int startY = (windowHeight - flagHeight) / 2;
 
-window.clear(); //clear avant dessin
-
 cursor cBlue = create_cursor(startX, startY);
 cBlue.color(BLUE);
 cBlue.draw_rectangle(bandWidth, flagHeight, true);
@@ -22,5 +20,3 @@ cWhite.draw_rectangle(bandWidth, flagHeight, true);
 cursor cRed = create_cursor(startX + (bandWidth * 2), startY);
 cRed.color(RED);
 cRed.draw_rectangle(bandWidth, flagHeight, true);
-
-window.update();

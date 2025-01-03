@@ -76,10 +76,6 @@
 
 <draw_ellipse> ::= "draw_ellipse" "(" <expression> "," <expression> "," <bool_value> ")"
 
-<window_statement> ::= "window" "." ( <clear> | <update> )
-<clear> ::= "clear" "(" ")"
-<update> ::= "update" "(" ")"
-
 <color_value> ::= <predefined_color> | <custom_color>
 <predefined_color> ::= "BLACK" | "WHITE" | "RED" | "GREEN" | "BLUE"
                     | "GRAY" | "LIGHT_GRAY" | "DARK_GRAY"

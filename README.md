@@ -114,6 +114,7 @@ To begin with Draw++, follow the steps below to set up your environment and star
   cd ide
   python3 main.py
 ```
+> ⚠️ It is important to launch the IDE from the right directory. Otherwise, the code wont run.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

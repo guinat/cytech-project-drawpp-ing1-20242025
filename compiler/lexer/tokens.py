@@ -45,11 +45,6 @@ class TokenType(Enum):
     DRAW_TRIANGLE = auto()
     DRAW_ELLIPSE = auto()
 
-    # Window-related keywords
-    WINDOW = auto()
-    CLEAR = auto()
-    UPDATE = auto()
-
     # Color values
     RGB = auto()
 

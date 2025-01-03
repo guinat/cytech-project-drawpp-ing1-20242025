@@ -193,9 +193,6 @@ class Lexer:
             'false': TokenType.BOOL_VALUE,
             'cursor': TokenType.CURSOR,
             'create_cursor': TokenType.CREATE_CURSOR,
-            'window': TokenType.WINDOW,
-            'clear': TokenType.CLEAR,
-            'update': TokenType.UPDATE,
             'color': TokenType.COLOR,
             'thickness': TokenType.THICKNESS,
             'move': TokenType.MOVE,
@@ -319,50 +316,3 @@ class Lexer:
 
         tokens.append(Token(TokenType.EOF, None, self.line, self.column))
         return tokens
-
-
-def main():
-    """
-    @brief Main function to demonstrate the lexer functionality.
-    """
-    source_code = """
-    var int width = 800;
-    var float angle = 45.0;
-    var string message = "Hello Draw++";
-    var bool isDrawing = true;
-
-    cursor main = create_cursor(400, 300);
-    main.color(RED);
-    main.thickness(2);
-
-    if (isDrawing == true) {
-        main.visible(true);
-        main.draw_rectangle(60, 40, true);
-    } elif (width > 500) {
-        main.draw_circle(30, false);
-    } else {
-        window.clear();
-    };
-
-    for (var int i = 0; i < 4; i += 1) {
-        main.rotate(90);
-        main.move(100);
-    };
-    """
-
-    try:
-        lexer = Lexer(source_code)
-        tokens = lexer.tokenize()
-
-        print("=== Tokens générés ===")
-        for token in tokens:
-            print(token)
-
-    except ValueError as e:
-        print(f"Erreur lors de l'analyse lexicale : {e}")
-    except Exception as e:
-        print(f"Erreur inattendue : {e}")
-
-
-if __name__ == "__main__":
-    main()

@@ -106,12 +106,6 @@ class Parser:
         elif token.type == TokenType.WHILE:
             return self.while_statement()
 
-        elif token.type == TokenType.WINDOW:
-            return self.window_statement()
-
-        elif token.type in [TokenType.CLEAR, TokenType.UPDATE]:
-            return self.window_statement()
-
         elif token.type == TokenType.IDENTIFIER:
             return self.identifier_statement()
 
@@ -130,13 +124,7 @@ class Parser:
         if self.current_token.type == TokenType.DOT:
             self.eat(TokenType.DOT)
             method_token = self.current_token
-            if method_token.type in [TokenType.CLEAR, TokenType.UPDATE]:
-                if name == 'window':
-                    return self.window_call(method_token)
-                else:
-                    self.error(
-                        "Invalid window method call on non-window identifier")
-            elif self.is_cursor_method_type(method_token.type):
+            if self.is_cursor_method_type(method_token.type):
                 method_name = method_token.value
                 self.eat(method_token.type)
                 return self.cursor_method_statement(name, method_name)
@@ -198,19 +186,6 @@ class Parser:
         else:
             return CursorMethod(cursor_name, method_name, params)
 
-    def window_call(self, method_token):
-        """
-        @brief Parses a method call on the "window" object.
-
-        @param method_token The method token (e.g., clear or update).
-        @return A WindowCommand node.
-        """
-        self.eat(method_token.type)
-        self.eat(TokenType.LPAREN)
-        self.eat(TokenType.RPAREN)
-        self.eat(TokenType.SEMICOLON)
-        return WindowCommand(method_token.value)
-
     def assignment_statement(self, name, eat_semicolon=True):
         """
         @brief Parses an assignment statement.
@@ -239,28 +214,6 @@ class Parser:
             self.eat(TokenType.SEMICOLON)
 
         return Assign(name, value)
-
-    def window_statement(self):
-        """
-        @brief Parses a window-related statement (e.g., clear, update).
-
-        @return A WindowCommand node.
-        """
-        token = self.current_token
-        if token.type == TokenType.WINDOW:
-            self.eat(TokenType.WINDOW)
-            self.eat(TokenType.DOT)
-            method_token = self.current_token
-            if method_token.type not in [TokenType.CLEAR, TokenType.UPDATE]:
-                self.error("Expected 'clear' or 'update' after 'window.'")
-            self.eat(method_token.type)
-        else:
-            method_token = self.current_token
-            self.eat(method_token.type)
-        self.eat(TokenType.LPAREN)
-        self.eat(TokenType.RPAREN)
-        self.eat(TokenType.SEMICOLON)
-        return WindowCommand(method_token.value)
 
     def if_statement(self):
         """

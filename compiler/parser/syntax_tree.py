@@ -101,19 +101,6 @@ class DrawCommand(ASTNode):
     def __str__(self):
         return f"DrawCommand({self.cursor_name}, {self.shape_type}, {self.params})"
 
-class WindowCommand(ASTNode):
-    """
-    @brief Represents a window-related command in the AST.
-
-    @param command Command to execute (e.g., clear or update).
-    """
-    def __init__(self, command):
-        super().__init__()
-        self.command = command
-
-    def __str__(self):
-        return f"WindowCommand({self.command})"
-
 class If(ASTNode):
     """
     @brief Represents an if-statement in the AST.
