@@ -377,10 +377,6 @@ class Parser:
             self.eat(TokenType.NUMBER)
             return Num(token.value)
 
-        elif token.type == TokenType.STRING:
-            self.eat(TokenType.STRING)
-            return StringLiteral(token.value)
-
         elif token.type == TokenType.BOOL_VALUE:
             self.eat(TokenType.BOOL_VALUE)
             return BooleanLiteral(token.value)
@@ -393,7 +389,7 @@ class Parser:
                             TokenType.CORAL, TokenType.GOLD, TokenType.PURPLE,
                             TokenType.INDIGO, TokenType.TURQUOISE, TokenType.NAVY,
                             TokenType.TEAL, TokenType.FOREST_GREEN, TokenType.SKY_BLUE,
-                            TokenType.OLIVE, TokenType.SALMON, TokenType.BEIGE]:
+                            TokenType.OLIVE, TokenType.SALMON, TokenType.BEIGE, TokenType.YELLOW]:
             color_name = token.value
             self.eat(token.type)
             return ColorValue(color_name=color_name)
@@ -435,7 +431,6 @@ class Parser:
             TokenType.INT,
             TokenType.FLOAT,
             TokenType.BOOL,
-            TokenType.STRING_TYPE,
             TokenType.COLOR
         ]
 

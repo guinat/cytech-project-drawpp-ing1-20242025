@@ -110,9 +110,6 @@ class SemanticAnalyzer:
         if from_type == TokenType.INT and to_type == TokenType.FLOAT:
             return True
 
-        if from_type == TokenType.STRING and to_type == TokenType.STRING_TYPE:
-            return True
-
         if from_type == TokenType.BOOL_VALUE and to_type == TokenType.BOOL:
             return True
 
@@ -338,15 +335,6 @@ class SemanticAnalyzer:
         @return TokenType.FLOAT if the value is a float, TokenType.INT otherwise.
         """
         return TokenType.FLOAT if isinstance(node.value, float) else TokenType.INT
-
-    def visit_StringLiteral(self, node):
-        """
-        @brief Visits a string literal node.
-
-        @param node The string literal node.
-        @return TokenType.STRING.
-        """
-        return TokenType.STRING
 
     def visit_BooleanLiteral(self, node):
         """

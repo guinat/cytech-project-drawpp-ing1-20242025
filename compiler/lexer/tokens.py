@@ -8,19 +8,16 @@ class TokenType(Enum):
     # Identifiers and literals
     IDENTIFIER = auto()  # Variable names
     NUMBER = auto()  # Integers and floats
-    STRING = auto()  # String literals
     BOOL_VALUE = auto()  # true/false
 
     # Types
     INT = auto()
     FLOAT = auto()
     BOOL = auto()
-    STRING_TYPE = auto()
     COLOR = auto()
 
     # Declaration keywords
     VAR = auto()
-    CONST = auto()
 
     # Control flow keywords
     IF = auto()

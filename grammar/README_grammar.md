@@ -8,14 +8,11 @@ Draw++ supports the following data types:
 - `int` (64-bit integer)
 - `float` (64-bit float)
 - `bool` (boolean)
-- `string` (text string)
 - `color` (for color values)
 
-### **Variables and Constants**
+### **Variables**
 - **Variables:** `var <type> <identifier> = <expression>;`
   - Example: `var int length = 10;`
-- **Constants:** `const <type> <identifier> = <expression>;`
-  - Example: `const float PI = 3.14159;`
 
 ### **Control Flow**
 **Conditions :**
