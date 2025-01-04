@@ -5,7 +5,8 @@ from ide.config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
 from ide.utils.error_analyzer import ErrorAnalyzer
 from ide.utils.file_manager import save_file, file_paths
 
-
+# when you open a new tab, this is the default code
+initial_content = 'var int windowHeight = 500;\nvar int windowWidth = 500;'
 
 class ErrorHighlighter:
     """
@@ -335,6 +336,10 @@ def add_tab(notebook, title="Untitled"):
         undo=True,
         maxundo=-1
     )
+    
+    if initial_content:
+        editor.insert("1.0", initial_content)
+    
     editor.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=(5, 5))
 
     line_numbers.attach(editor)

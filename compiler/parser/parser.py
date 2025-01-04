@@ -119,6 +119,9 @@ class Parser:
         @return A node representing an assignment, method call, or error.
         """
         name = self.current_token.value
+        if name == 'windowWidth' or name == 'windowHeight':
+            self.error("Cannot reassign window dimensions")
+
         self.eat(TokenType.IDENTIFIER)
 
         if self.current_token.type == TokenType.DOT:
@@ -374,10 +377,6 @@ class Parser:
             self.eat(TokenType.NUMBER)
             return Num(token.value)
 
-        elif token.type == TokenType.STRING:
-            self.eat(TokenType.STRING)
-            return StringLiteral(token.value)
-
         elif token.type == TokenType.BOOL_VALUE:
             self.eat(TokenType.BOOL_VALUE)
             return BooleanLiteral(token.value)
@@ -390,7 +389,7 @@ class Parser:
                             TokenType.CORAL, TokenType.GOLD, TokenType.PURPLE,
                             TokenType.INDIGO, TokenType.TURQUOISE, TokenType.NAVY,
                             TokenType.TEAL, TokenType.FOREST_GREEN, TokenType.SKY_BLUE,
-                            TokenType.OLIVE, TokenType.SALMON, TokenType.BEIGE]:
+                            TokenType.OLIVE, TokenType.SALMON, TokenType.BEIGE, TokenType.YELLOW]:
             color_name = token.value
             self.eat(token.type)
             return ColorValue(color_name=color_name)
@@ -432,7 +431,6 @@ class Parser:
             TokenType.INT,
             TokenType.FLOAT,
             TokenType.BOOL,
-            TokenType.STRING_TYPE,
             TokenType.COLOR
         ]
 
@@ -448,8 +446,13 @@ class Parser:
 
         self.eat(TokenType.ASSIGN)
         init_value = self.expr()
+        
+        if var_name in ['windowWidth', 'windowHeight']:
+            if var_type != TokenType.INT:
+                self.error("Window dimensions must be integers")
+            if isinstance(init_value, Num) and (init_value.value < 340 or init_value.value > 1000):
+                self.error("Window dimensions must be between 340 and 1000")
         self.eat(TokenType.SEMICOLON)
-
         return VarDecl(var_type, var_name, init_value)
 
     def parse(self):

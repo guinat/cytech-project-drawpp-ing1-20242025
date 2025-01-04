@@ -110,9 +110,6 @@ class SemanticAnalyzer:
         if from_type == TokenType.INT and to_type == TokenType.FLOAT:
             return True
 
-        if from_type == TokenType.STRING and to_type == TokenType.STRING_TYPE:
-            return True
-
         if from_type == TokenType.BOOL_VALUE and to_type == TokenType.BOOL:
             return True
 
@@ -339,15 +336,6 @@ class SemanticAnalyzer:
         """
         return TokenType.FLOAT if isinstance(node.value, float) else TokenType.INT
 
-    def visit_StringLiteral(self, node):
-        """
-        @brief Visits a string literal node.
-
-        @param node The string literal node.
-        @return TokenType.STRING.
-        """
-        return TokenType.STRING
-
     def visit_BooleanLiteral(self, node):
         """
         @brief Visits a boolean literal node.
@@ -387,6 +375,19 @@ class SemanticAnalyzer:
             raise SemanticError(f"Variable {node.name} not declared")
         return var_type
 
+    def check_window_dimensions(self):
+        """
+        @brief Checks if windowWidth and windowHeight are declared and are of type int.
+
+        @throws SemanticError if windowWidth or windowHeight are not declared or not of type int.
+        """
+        windowWidth_type = self.symbol_table.lookup("windowWidth")
+        windowHeight_type = self.symbol_table.lookup("windowHeight")
+
+        if windowWidth_type is None:
+            raise SemanticError("Variable windowWidth not declared")
+        if windowHeight_type is None:
+            raise SemanticError("Variable windowHeight not declared")
 
 def analyze(ast):
     """
@@ -397,7 +398,8 @@ def analyze(ast):
     """
     analyzer = SemanticAnalyzer()
     try:
-        analyzer.visit(ast)
+        analyzer.visit(ast)  # visits whole AST to fill symbol table
+        analyzer.check_window_dimensions() # checks if windowWidth and windowHeight are declared and are of type int
         return True, None
     except SemanticError as e:
         return False, str(e)

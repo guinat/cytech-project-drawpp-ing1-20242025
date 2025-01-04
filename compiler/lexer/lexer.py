@@ -110,27 +110,6 @@ class Lexer:
             return TokenType.NUMBER, int(number)
         return TokenType.NUMBER, float(number)
 
-    def get_string(self):
-        """
-        @brief Extracts a string literal from the source code.
-
-        @return A tuple containing the token type and the string value.
-        @throws ValueError if the string is unterminated.
-        """
-        string = ''
-        self.advance()
-
-        while self.current_char is not None and self.current_char != '"':
-            string += self.current_char
-            self.advance()
-
-        if self.current_char != '"':
-            raise ValueError(f"Unterminated string at line {
-                             self.line}, column {self.column}")
-
-        self.advance()
-        return TokenType.STRING, string
-
     def get_operator(self):
         """
         @brief Extracts an operator or punctuation from the source code.
@@ -180,10 +159,8 @@ class Lexer:
         keywords = {
             'int': TokenType.INT,
             'float': TokenType.FLOAT,
-            'string': TokenType.STRING_TYPE,
             'bool': TokenType.BOOL,
             'var': TokenType.VAR,
-            'const': TokenType.CONST,
             'if': TokenType.IF,
             'elif': TokenType.ELIF,
             'else': TokenType.ELSE,
@@ -227,6 +204,7 @@ class Lexer:
             'OLIVE': TokenType.OLIVE,
             'SALMON': TokenType.SALMON,
             'BEIGE': TokenType.BEIGE,
+            'YELLOW': TokenType.YELLOW,
         }
 
         while self.current_char is not None:
@@ -272,14 +250,6 @@ class Lexer:
                 start_line = self.line
                 start_column = self.column
                 token_type, value = self.get_number()
-                tokens.append(
-                    Token(token_type, value, start_line, start_column))
-                continue
-
-            if self.current_char == '"':
-                start_line = self.line
-                start_column = self.column
-                token_type, value = self.get_string()
                 tokens.append(
                     Token(token_type, value, start_line, start_column))
                 continue
