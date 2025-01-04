@@ -17,4 +17,5 @@ SHORTCUTS = {
     "save_file": "<Control-s>",
     "close_tab": "<Control-w>",
     "select_all": "<Control-a>",
+    "run_code": "<Control-e>",
 }

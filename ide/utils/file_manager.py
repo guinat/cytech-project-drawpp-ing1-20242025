@@ -65,24 +65,3 @@ def new_file(notebook, add_tab_callback):
     """
     editor, frame = add_tab_callback(notebook, title="Untitled")
     file_paths[frame] = None
-
-
-def close_tab(notebook):
-    """
-    @brief Closes the currently active tab.
-
-    @param notebook The ttk.Notebook widget where the tabs are managed.
-    """
-    current_tab = notebook.select()
-    current_frame = notebook.nametowidget(current_tab)
-    editor = getattr(current_frame, "editor", None)
-
-    if editor and editor.get("1.0", "end-1c").strip():
-        result = messagebox.askyesnocancel("Close Tab", "Do you want to save changes before closing?")
-        if result is None:  # Cancel
-            return
-        elif result:  # Yes
-            save_file(notebook)
-
-    notebook.forget(current_tab)
-    file_paths.pop(current_frame, None)

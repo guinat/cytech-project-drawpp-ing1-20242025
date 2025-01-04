@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 from ide.components.editor_tab import update_preview
-from ide.utils.file_manager import new_file, open_file, save_file, close_tab
+from ide.utils.file_manager import new_file, open_file, save_file
+from ide.components.editor_tab import close_tab
 import os
 
 def create_menu_bar(root, notebook, add_tab_callback):

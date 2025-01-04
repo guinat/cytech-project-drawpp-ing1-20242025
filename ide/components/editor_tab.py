@@ -1,8 +1,10 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import messagebox, ttk
 from PIL import Image, ImageTk  # Pour afficher l'image générée
 from ide.config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
 from ide.utils.error_analyzer import ErrorAnalyzer
+from ide.utils.file_manager import save_file, file_paths
+
 
 
 class ErrorHighlighter:
@@ -366,6 +368,25 @@ def add_tab(notebook, title="Untitled"):
 
     return editor, frame
 
+def close_tab(notebook):
+    """
+    @brief Closes the currently active tab.
+
+    @param notebook The ttk.Notebook widget where the tabs are managed.
+    """
+    current_tab = notebook.select()
+    current_frame = notebook.nametowidget(current_tab)
+    editor = getattr(current_frame, "editor", None)
+
+    if editor and editor.get("1.0", "end-1c").strip():
+        result = messagebox.askyesnocancel("Close Tab", "Do you want to save changes before closing?")
+        if result is None:  # Cancel
+            return
+        elif result:  # Yes
+            save_file(notebook)
+
+    notebook.forget(current_tab)
+    file_paths.pop(current_frame, None)
 
 def update_preview(frame, image_path="output.bmp"):
     """
@@ -375,7 +396,7 @@ def update_preview(frame, image_path="output.bmp"):
     """
     try: #TODO: CHECK RESIZE
         image = Image.open(image_path)
-        image = image.resize((300, 200), Image.Resampling.LANCZOS)  # Utilisez LANCZOS
+        image = image.resize((300, 200), Image.Resampling.LANCZOS)
         photo = ImageTk.PhotoImage(image)
 
         frame.preview_label.configure(image=photo, text="")
