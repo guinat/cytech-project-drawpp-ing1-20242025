@@ -1,9 +1,0 @@
-var int windowWidth = 800;
-var int windowHeight = 600;
-
-var int posX = windowWidth / 2;
-var int posY = windowHeight /2;
-
-cursor c1 = create_cursor(posX, posY);
-c1.color(CORAL);
-c1.draw_circle(150,true);
