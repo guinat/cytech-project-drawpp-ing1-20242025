@@ -119,6 +119,9 @@ class Parser:
         @return A node representing an assignment, method call, or error.
         """
         name = self.current_token.value
+        if name == 'windowWidth' or name == 'windowHeight':
+            self.error("Cannot reassign window dimensions")
+
         self.eat(TokenType.IDENTIFIER)
 
         if self.current_token.type == TokenType.DOT:
