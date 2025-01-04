@@ -399,14 +399,32 @@ def update_preview(frame, image_path="output.bmp"):
     @param frame The frame containing the preview area.
     @param image_path The path to the generated image.
     """
-    try: #TODO: CHECK RESIZE
+    try:
         image = Image.open(image_path)
-        image = image.resize((300, 200), Image.Resampling.LANCZOS)
+        orig_width, orig_height = image.size # PIL lib
+        aspect_ratio = orig_width / orig_height
+        
+        MAX_WIDTH = 500
+        MAX_HEIGHT = 500
+        
+        # respects aspect ratio
+        if orig_width > MAX_WIDTH or orig_height > MAX_HEIGHT:
+            if aspect_ratio > 1:  # wider than tall
+                new_width = MAX_WIDTH
+                new_height = int(MAX_WIDTH / aspect_ratio)
+            else:  # taller than wide
+                new_height = MAX_HEIGHT
+                new_width = int(MAX_HEIGHT * aspect_ratio)
+        else:
+            new_width = orig_width
+            new_height = orig_height
+
+        image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
         photo = ImageTk.PhotoImage(image)
 
         frame.preview_label.configure(image=photo, text="")
         frame.preview_label.image = photo
+
+        
     except Exception as e:
-        frame.preview_label.configure(
-            text=f"Error displaying image: {str(e)}", image=""
-        )
+        print(f"Error updating preview: {e}")
