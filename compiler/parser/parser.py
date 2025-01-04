@@ -448,8 +448,13 @@ class Parser:
 
         self.eat(TokenType.ASSIGN)
         init_value = self.expr()
+        
+        if var_name in ['windowWidth', 'windowHeight']:
+            if var_type != TokenType.INT:
+                self.error("Window dimensions must be integers")
+            if isinstance(init_value, Num) and (init_value.value < 340 or init_value.value > 1000):
+                self.error("Window dimensions must be between 340 and 1000")
         self.eat(TokenType.SEMICOLON)
-
         return VarDecl(var_type, var_name, init_value)
 
     def parse(self):
