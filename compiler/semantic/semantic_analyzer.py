@@ -132,7 +132,7 @@ class SemanticAnalyzer:
             'rotate': [TokenType.NUMBER],
             'color': [TokenType.COLOR],
             'thickness': [TokenType.NUMBER],
-            'visible': [TokenType.BOOL_VALUE],
+            'visible': [],
             'draw_line': [TokenType.NUMBER],
             'draw_rectangle': [TokenType.NUMBER, TokenType.NUMBER, TokenType.BOOL_VALUE],
             'draw_circle': [TokenType.NUMBER, TokenType.BOOL_VALUE],

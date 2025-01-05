@@ -231,10 +231,9 @@ class CodeGenerator:
             self.write_line(
                 f"{node.cursor_name}->thickness = (int){params[0]};")
 
-
         elif method == "visible":
-            visibility = params[0].lower() == "true"
-            self.write_line(f"set_cursor_visibility({node.cursor_name}, {params[0]});")
+            visibility = "true"
+            self.write_line(f"set_cursor_visibility({node.cursor_name}, {visibility});")
             if visibility:
                 self.visible_cursors.append(node.cursor_name)
 

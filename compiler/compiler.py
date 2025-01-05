@@ -54,10 +54,10 @@ class Compiler:
             with open(input_file, 'r') as f:
                 source_code = f.read()
 
-            # Lexical analysis
-            print("\n[2/5] Performing lexical analysis...")
+            # tokenization
+            print("\n[2/5] Tokenizing...")
             self.tokens = self._lexical_analysis(source_code)
-            print("✓ Lexical analysis completed successfully")
+            print("✓ Your code has been tokenized successfully")
             print(f"Number of tokens: {len(self.tokens)}")
 
             # Syntax analysis

@@ -52,7 +52,7 @@ It has the following properties :
 - `.thickness(value)` sets the line thickness.
 
 **Visibility:**
-- `.visible(true/false)` shows or hides the cursor.
+- `.visible()` shows the cursor at the requested moment.
 
 Examples : `variable.position(100, 200);`, `variable.color(RED);`, `variable.thickness(5);`, `variable.move(50);`
 

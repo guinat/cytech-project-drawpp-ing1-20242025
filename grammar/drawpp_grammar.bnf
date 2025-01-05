@@ -49,7 +49,7 @@
 <color> ::= "color" "(" <color_value> ")"
 <thickness> ::= "thickness" "(" <expression> ")"
 
-<cursor_visibility> ::= <identifier> "." "visible" "(" <bool_value> ")"
+<cursor_visibility> ::= <identifier> "." "visible" "()"
 
 <shape_statement> ::= <identifier> "." <shape_type>
 
