@@ -78,6 +78,7 @@ class InteractiveTerminal(tk.Text):
         self.process.stdin.write(input_line + "\n")
         self.process.stdin.flush()
         self.insert(tk.END, "\n")  # Move to the next line
+        self.see(tk.END)
         return "break"  # Prevent default Enter key behavior
 
 
@@ -99,6 +100,7 @@ class DrawTerminal(Cmd):
         self.source_code = None
         self.tokens = None
         self.ast = None
+        self.history = []
         self.check_imports()
 
     def print_to_terminal(self, message):
@@ -123,6 +125,102 @@ class DrawTerminal(Cmd):
             self.print_to_terminal(f"Checked classes:\nProgram: {Program}, VarDecl: {VarDecl}")
         except NameError as e:
             self.print_to_terminal(f"Import error: {e}")
+
+    def precmd(self, line):
+        """
+        Called before executing a command, adds to command history.
+        """
+        if line.strip():  # Ignore empty commands
+            self.history.append(line)
+        return line
+
+    def onecmd(self, line):
+        """
+        Override onecmd to ensure precmd is called before executing commands.
+        """
+        line = self.precmd(line)  # Call precmd to add the command to history
+        return super().onecmd(line)
+
+    def do_history(self, _):
+        """
+        Displays the history of executed commands.
+        """
+        if not self.history:
+            self.print_to_terminal("No commands in history.")
+            return
+
+        self.print_to_terminal("\n=== Command History ===")
+        for idx, command in enumerate(self.history, start=1):
+            self.print_to_terminal(f"{idx}. {command}")
+
+    def do_see(self, line):
+        """
+        Lists available files in the examples directory.
+        """
+        directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../examples"))
+
+        try:
+            if not os.path.exists(directory):
+                self.print_to_terminal(f"Directory '{directory}' not found.")
+                return
+
+            files = os.listdir(directory)
+            if not files:
+                self.print_to_terminal(f"No files found in '{directory}'.")
+                return
+
+            self.print_to_terminal(f"Files in '{directory}':")
+            for file in files:
+                self.print_to_terminal(f" - {file}")
+        except Exception as e:
+            self.print_to_terminal(f"Error listing files: {e}")
+
+    def do_debug(self, line):
+        """
+        Debugs a line of code or a Draw++ file and displays errors.
+        Syntax:
+            debug -c <code>
+            debug <file.dpp>
+        """
+        args = line.split(maxsplit=1)
+        if not args:
+            self.print_to_terminal("Error: Invalid syntax. Use 'debug -c <code>' or 'debug <file.dpp>'.")
+            return
+
+        try:
+            if args[0] == "-c":
+                code = args[1]
+                self._debug_line(code)
+            else:
+                file_path = args[0]
+                if not file_path.endswith(".dpp"):
+                    file_path += ".dpp"
+                if not os.path.exists(file_path):
+                    self.print_to_terminal(f"Error: File '{file_path}' not found.")
+                    return
+                with open(file_path, "r") as file:
+                    code = file.read()
+                self._debug_line(code)
+        except Exception as e:
+            self.print_to_terminal(f"Debug error: {e}")
+
+    def _debug_line(self, code):
+        """
+        Debugs a line of code and displays errors.
+        """
+        try:
+            self.print_to_terminal("[INFO] Lexical Analysis...")
+            lexer = Lexer(code)
+            tokens = lexer.tokenize()
+            self.print_to_terminal("[INFO] Lexical Analysis Passed.")
+
+            self.print_to_terminal("[INFO] Syntax Analysis...")
+            parser = Parser(tokens)
+            ast = parser.parse()
+            self.print_to_terminal("[INFO] Syntax Analysis Passed.")
+            self.print_to_terminal("[INFO] No errors detected.")
+        except Exception as e:
+            self.print_to_terminal(f"[ERROR] {e}")
 
     def do_help(self, arg):
         """
