@@ -1,0 +1,12 @@
+var int windowHeight = 500;
+var int windowWidth = 500;
+
+cursor c = create_cursor(windowWidth / 2, windowHeight / 2);
+c.color(BLUE);
+
+for (var int i = 0; i < 10; i = i + 1) {
+    c.draw_line(50);      // Dessine une marche horizontale
+    c.rotate(90);         // Tourne de 90° pour monter
+    c.draw_line(50);      // Dessine une marche verticale
+    c.rotate(180);        // Retourne à l'horizontale
+};

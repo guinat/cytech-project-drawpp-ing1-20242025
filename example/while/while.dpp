@@ -1,0 +1,13 @@
+var int windowHeight = 500;
+var int windowWidth = 500;
+
+var int size = 20;
+var int maxSize = 200;
+
+cursor c = create_cursor((windowWidth / 2) - 100, (windowHeight / 2) - 100);
+c.color(GREEN);
+
+while (size <= maxSize) {
+    c.draw_rectangle(size, size, false); // Dessine un carré non rempli
+    size = size + 20; // Augmente la taille pour le prochain carré
+};

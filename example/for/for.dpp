@@ -1,0 +1,12 @@
+var int windowHeight = 500;
+var int windowWidth = 500;
+
+var int gridSize = 50;
+
+cursor c = create_cursor((windowHeight / 2) - 5 * gridSize, windowWidth / 2);
+c.color(RED);
+
+for (var int col = 0; col < 5; col = col + 1) {
+        c.move(gridSize);
+        c.draw_rectangle(gridSize, gridSize, false); // Dessine une cellule de la grille
+};

@@ -1,0 +1,21 @@
+var int windowWidth = 800;
+var int windowHeight = 600;
+
+var int size = windowWidth / 3;
+var color myColor = rgb(5, 10, 231);
+
+var int i = 3;
+
+cursor c1 = create_cursor(size, 0);
+
+if(i == 0) {
+	c1.color(YELLOW);
+}
+elif(i == 1) {
+	 c1.color(myColor);
+}
+else {
+	c1.color(INDIGO);
+};
+
+c1.draw_rectangle(size, windowWidth, true);

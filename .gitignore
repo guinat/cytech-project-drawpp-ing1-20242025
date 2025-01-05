@@ -26,6 +26,10 @@ Thumbs.db
 test_program
 *.bmp
 temp*
+drawpp.out
+drawpp.aux
+drawpp.*.gz
+drawpp.toc
 
 #setuptools
 cytech_project_drawpp_ing1_20242025.egg-info/
