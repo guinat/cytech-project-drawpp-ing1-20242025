@@ -86,7 +86,7 @@ class CodeGenerator:
 
     def generate(self, ast):
         """
-        Modifie la méthode principale de génération pour prendre en compte les curseurs visibles
+        Generates the C code with a single final render pass, captures the image, then quits.
         """
         self.visible_cursors = []  # Liste des curseurs visibles à dessiner après les formes
 
