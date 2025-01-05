@@ -11,9 +11,12 @@
  * @param y2 The y-coordinate of the ending point.
  * @param color The color of the line.
  */
-void draw_line(int x1, int y1, int x2, int y2, SDL_Color color) {
+void draw_line(int x1, int y1, int x2, int y2, SDL_Color color, int thickness) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+
+    for (int i = -thickness / 2; i <= thickness / 2; i++) {
+        SDL_RenderDrawLine(renderer, x1, y1 + i, x2, y2 + i);
+    }
 }
 
 /**
@@ -26,15 +29,20 @@ void draw_line(int x1, int y1, int x2, int y2, SDL_Color color) {
  * @param filled If true, the rectangle is filled; otherwise, only the outline is drawn.
  * @param color The color of the rectangle.
  */
-void draw_rectangle(int x, int y, int width, int height, bool filled, SDL_Color color) {
+void draw_rectangle(int x, int y, int width, int height, bool filled, SDL_Color color, int thickness) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_Rect rect = { .x = x, .y = y, .w = width, .h = height };
+
     if (filled) {
         SDL_RenderFillRect(renderer, &rect);
     } else {
-        SDL_RenderDrawRect(renderer, &rect);
+        for (int i = 0; i < thickness; i++) {
+            SDL_Rect border = {x - i, y - i, width + 2 * i, height + 2 * i};
+            SDL_RenderDrawRect(renderer, &border);
+        }
     }
 }
+
 
 /**
  * @brief Draws a circle centered at a given position.
@@ -45,21 +53,26 @@ void draw_rectangle(int x, int y, int width, int height, bool filled, SDL_Color 
  * @param filled If true, the circle is filled; otherwise, only the outline is drawn.
  * @param color The color of the circle.
  */
-void draw_circle(int centerX, int centerY, int radius, bool filled, SDL_Color color) {
+void draw_circle(int centerX, int centerY, int radius, bool filled, SDL_Color color, int thickness) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
     if (filled) {
         for (int dx = -radius; dx <= radius; dx++) {
             int height = (int)sqrt(radius * radius - dx * dx);
             SDL_RenderDrawLine(renderer, centerX + dx, centerY - height, centerX + dx, centerY + height);
         }
     } else {
-        for (float angle = 0; angle < 2 * PI; angle += 0.01) {
-            int x = centerX + (int)(radius * cos(angle));
-            int y = centerY + (int)(radius * sin(angle));
-            SDL_RenderDrawPoint(renderer, x, y);
+        for (int t = 0; t < thickness; t++) {
+            for (float angle = 0; angle < 2 * PI; angle += 0.01) {
+                int x = centerX + (int)((radius + t) * cos(angle));
+                int y = centerY + (int)((radius + t) * sin(angle));
+                SDL_RenderDrawPoint(renderer, x, y);
+            }
         }
     }
 }
+
+
 
 /**
  * @brief Draws a triangle connecting three points.
@@ -73,7 +86,7 @@ void draw_circle(int centerX, int centerY, int radius, bool filled, SDL_Color co
  * @param filled If true, the triangle is filled; otherwise, only the outline is drawn.
  * @param color The color of the triangle.
  */
-void draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, bool filled, SDL_Color color) {
+void draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, bool filled, SDL_Color color, int thickness) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     if (filled) {
         int minY = fmin(y1, fmin(y2, y3));
@@ -99,9 +112,11 @@ void draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, bool filled, 
             }
         }
     } else {
-        SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-        SDL_RenderDrawLine(renderer, x2, y2, x3, y3);
-        SDL_RenderDrawLine(renderer, x3, y3, x1, y1);
+        for (int i = -thickness / 2; i <= thickness / 2; i++) {
+            SDL_RenderDrawLine(renderer, x1, y1 + i, x2, y2 + i);
+            SDL_RenderDrawLine(renderer, x2, y2 + i, x3, y3 + i);
+            SDL_RenderDrawLine(renderer, x3, y3 + i, x1, y1 + i);
+        }
     }
 }
 
@@ -115,18 +130,22 @@ void draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, bool filled, 
  * @param filled If true, the ellipse is filled; otherwise, only the outline is drawn.
  * @param color The color of the ellipse.
  */
-void draw_ellipse(int centerX, int centerY, int radiusX, int radiusY, bool filled, SDL_Color color) {
+void draw_ellipse(int centerX, int centerY, int radiusX, int radiusY, bool filled, SDL_Color color, int thickness) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
     if (filled) {
         for (int dx = -radiusX; dx <= radiusX; dx++) {
             float h = (float)radiusY * sqrt(1 - (dx * dx) / (float)(radiusX * radiusX));
             SDL_RenderDrawLine(renderer, centerX + dx, centerY - h, centerX + dx, centerY + h);
         }
     } else {
-        for (float angle = 0; angle < 2 * PI; angle += 0.01) {
-            int x = centerX + (int)(radiusX * cos(angle));
-            int y = centerY + (int)(radiusY * sin(angle));
-            SDL_RenderDrawPoint(renderer, x, y);
+        for (int t = 0; t < thickness; t++) {
+            for (float angle = 0; angle < 2 * PI; angle += 0.01) {
+                int x = centerX + (int)((radiusX + t) * cos(angle));
+                int y = centerY + (int)((radiusY + t) * sin(angle));
+                SDL_RenderDrawPoint(renderer, x, y);
+            }
         }
     }
 }
+

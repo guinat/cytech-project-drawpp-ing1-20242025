@@ -51,3 +51,4 @@ SDL_Color sky_blue = {135, 206, 235, 255};
 SDL_Color olive = {128, 128, 0, 255};
 SDL_Color salmon = {250, 128, 114, 255};
 SDL_Color beige = {245, 245, 220, 255};
+SDL_Color yellow = {255, 255, 0, 255};

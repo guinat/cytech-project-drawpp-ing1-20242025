@@ -86,8 +86,10 @@ class CodeGenerator:
 
     def generate(self, ast):
         """
-        Generates the C code with a single final render pass, captures the image, then quits.
+        Modifie la méthode principale de génération pour prendre en compte les curseurs visibles
         """
+        self.visible_cursors = []  # Liste des curseurs visibles à dessiner après les formes
+
         # 1) Inclusions
         for header in self.config["headers"]:
             self.write_line(header)
@@ -106,18 +108,23 @@ class CodeGenerator:
         self.write_line("}")
         self.write_line()
 
-        # 3) visit statements like creating cursors, drawing shapes, etc.
+        # 3) Visiter les noeuds
         for stmt in ast.statements:
             self.visit(stmt)
 
-        self.write_line()
-        # 4) render once
-        self.write_line('SDL_Delay(100);') # theres a render bug if we dont wait a bit
+        # 4) Dessiner les curseurs visibles après les formes
+        if self.visible_cursors:
+            self.write_line("// Dessiner les curseurs visibles après les formes")
+            for cursor_name in self.visible_cursors:
+                self.write_line(f"set_cursor_visibility({cursor_name}, true);")
+
+        # 5) Render une fois
+        self.write_line('SDL_Delay(100);')  # Nécessaire pour éviter des bugs de rendu
         self.write_line('printf("Presenting renderer...\\n");')
         self.write_line("SDL_RenderPresent(renderer);")
         self.write_line()
 
-        # 5) capture image and save it
+        # 6) Capture et sauvegarde
         self.write_line('printf("Saving output image...\\n");')
         self.write_line("SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(")
         self.indent_level += 1
@@ -224,9 +231,12 @@ class CodeGenerator:
             self.write_line(
                 f"{node.cursor_name}->thickness = (int){params[0]};")
 
+
         elif method == "visible":
-            self.write_line(
-                f"set_cursor_visibility({node.cursor_name}, {params[0]});")
+            visibility = params[0].lower() == "true"
+            self.write_line(f"set_cursor_visibility({node.cursor_name}, {params[0]});")
+            if visibility:
+                self.visible_cursors.append(node.cursor_name)
 
     def visit_DrawCommand(self, node):
         """

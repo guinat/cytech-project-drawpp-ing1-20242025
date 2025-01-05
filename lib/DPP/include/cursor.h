@@ -58,6 +58,24 @@ void set_cursor_color(Cursor* cursor, SDL_Color color);
  */
 void set_cursor_visibility(Cursor* cursor, bool visible);
 
+/**
+ * @brief Sets the thickness of a cursor's drawing
+ *
+ * @param cursor The cursor to modify
+ * @param thickness The new thickness value
+ */
+void set_cursor_thickness(Cursor* cursor, int thickness);
+
+/**
+ * @brief Clears a rectangular area on the screen
+ *
+ * @param x The x-coordinate of the top-left corner
+ * @param y The y-coordinate of the top-left corner
+ * @param width The width of the area
+ * @param height The height of the area
+ */
+void clear_area(int x, int y, int width, int height);
+
 // Cursor drawing functions
 /**
  * @brief Draws a line from the cursor's position
@@ -105,5 +123,12 @@ void cursor_draw_triangle(Cursor* cursor, double base, double height, bool fille
  * @param filled Whether to fill the ellipse
  */
 void cursor_draw_ellipse(Cursor* cursor, double radiusX, double radiusY, bool filled);
+
+/**
+ * @brief Prints the current position of the cursor
+ *
+ * @param cursor The cursor whose position is to be printed
+ */
+void print_cursor_position(Cursor* cursor);
 
 #endif /* DRAWPP_CURSOR_H */

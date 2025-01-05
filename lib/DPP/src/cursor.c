@@ -34,7 +34,7 @@ Cursor* create_cursor(double x, double y) {
         .y = y,
         .angle = 0.0,
         .thickness = 1,
-        .color = black, ///< Default color is black.
+        .color = blue, ///< Default color
         .visible = true,
         .active = true
     };
@@ -50,7 +50,7 @@ Cursor* create_cursor(double x, double y) {
  * @param distance The distance to move the cursor.
  */
 void move_cursor(Cursor* cursor, double distance) {
-    if (!cursor || !cursor->active || !cursor->visible) return;
+    if (!cursor || !cursor->active) return;
 
     double radians = cursor->angle * PI / 180.0;
     cursor->x += distance * cos(radians);
@@ -95,7 +95,65 @@ void set_cursor_color(Cursor* cursor, SDL_Color color) {
  */
 void set_cursor_visibility(Cursor* cursor, bool visible) {
     if (!cursor || !cursor->active) return;
+
     cursor->visible = visible;
+
+    if (visible) {
+        int cursorX = (int)cursor->x;
+        int cursorY = (int)cursor->y;
+
+        SDL_Color cursorColor = {0, 0, 0, 255}; // black
+        draw_rectangle(cursorX - 5, cursorY - 5, 10, 10, true, cursorColor, 1);
+    } else {
+        clear_area((int)cursor->x - 5, (int)cursor->y - 5, 10, 10);
+    }
+}
+
+
+
+
+
+/**
+ * @brief Sets the thickness of the cursor's drawing.
+ *
+ * @param cursor A pointer to the cursor to modify.
+ * @param thickness The new thickness value. Must be greater than 0.
+ */
+void set_cursor_thickness(Cursor* cursor, int thickness) {
+    if (!cursor || !cursor->active) {
+        printf("Error: Cursor is not valid or active\n");
+        return;
+    }
+
+    if (thickness <= 0) {
+        printf("Error: Thickness must be greater than 0\n");
+        return;
+    }
+
+    cursor->thickness = thickness;
+    printf("Cursor thickness set to %d\n", thickness);
+}
+
+/**
+ * @brief Clears a rectangular area on the rendering surface.
+ *
+ * @param x The x-coordinate of the top-left corner of the area to clear.
+ * @param y The y-coordinate of the top-left corner of the area to clear.
+ * @param width The width of the area to clear.
+ * @param height The height of the area to clear.
+ */
+void clear_area(int x, int y, int width, int height) {
+    if (!renderer) {
+        printf("Error: Renderer is not initialized\n");
+        return;
+    }
+
+    Uint8 r, g, b, a;
+    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_Rect clearRect = {x, y, width, height};
+    SDL_RenderFillRect(renderer, &clearRect);
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
 
 /**
@@ -105,13 +163,13 @@ void set_cursor_visibility(Cursor* cursor, bool visible) {
  * @param length The length of the line to draw.
  */
 void cursor_draw_line(Cursor* cursor, double length) {
-    if (!cursor || !cursor->active || !cursor->visible) return;
+    if (!cursor || !cursor->active) return;
 
     double radians = cursor->angle * PI / 180.0;
-    double endX = cursor->x + length * cos(radians);
-    double endY = cursor->y + length * sin(radians);
+    int endX = (int)(cursor->x + length * cos(radians));
+    int endY = (int)(cursor->y + length * sin(radians));
 
-    draw_line(cursor->x, cursor->y, endX, endY, cursor->color);
+    draw_line((int)cursor->x, (int)cursor->y, endX, endY, cursor->color, cursor->thickness);
 }
 
 /**
@@ -123,10 +181,9 @@ void cursor_draw_line(Cursor* cursor, double length) {
  * @param filled A boolean indicating whether the rectangle should be filled.
  */
 void cursor_draw_rectangle(Cursor* cursor, double width, double height, bool filled) {
-    if (!cursor || !cursor->active || !cursor->visible) return;
-    draw_rectangle(cursor->x, cursor->y, width, height, filled, cursor->color);
+    if (!cursor || !cursor->active) return;
+    draw_rectangle((int)cursor->x, (int)cursor->y, (int)width, (int)height, filled, cursor->color, cursor->thickness);
 }
-
 /**
  * @brief Draws a circle centered at the cursor's position.
  *
@@ -135,9 +192,10 @@ void cursor_draw_rectangle(Cursor* cursor, double width, double height, bool fil
  * @param filled A boolean indicating whether the circle should be filled.
  */
 void cursor_draw_circle(Cursor* cursor, double radius, bool filled) {
-    if (!cursor || !cursor->active || !cursor->visible) return;
-    draw_circle(cursor->x, cursor->y, radius, filled, cursor->color);
+    if (!cursor || !cursor->active) return;
+    draw_circle((int)cursor->x, (int)cursor->y, (int)radius, filled, cursor->color, cursor->thickness);
 }
+
 
 /**
  * @brief Draws a triangle based on the cursor's position and direction.
@@ -148,21 +206,21 @@ void cursor_draw_circle(Cursor* cursor, double radius, bool filled) {
  * @param filled A boolean indicating whether the triangle should be filled.
  */
 void cursor_draw_triangle(Cursor* cursor, double base, double height, bool filled) {
-    if (!cursor || !cursor->active || !cursor->visible) return;
+    if (!cursor || !cursor->active) return;
 
     double radians = cursor->angle * PI / 180.0;
 
-    double x1 = cursor->x;
-    double y1 = cursor->y;
+    int x1 = (int)cursor->x;
+    int y1 = (int)cursor->y;
 
-    double x2 = x1 + base * cos(radians);
-    double y2 = y1 + base * sin(radians);
+    int x2 = (int)(x1 + base * cos(radians));
+    int y2 = (int)(y1 + base * sin(radians));
 
     double perpRadians = radians + PI / 2.0;
-    double x3 = x1 + height * cos(perpRadians);
-    double y3 = y1 + height * sin(perpRadians);
+    int x3 = (int)(x1 + height * cos(perpRadians));
+    int y3 = (int)(y1 + height * sin(perpRadians));
 
-    draw_triangle(x1, y1, x2, y2, x3, y3, filled, cursor->color);
+    draw_triangle(x1, y1, x2, y2, x3, y3, filled, cursor->color, cursor->thickness);
 }
 
 /**
@@ -174,6 +232,6 @@ void cursor_draw_triangle(Cursor* cursor, double base, double height, bool fille
  * @param filled A boolean indicating whether the ellipse should be filled.
  */
 void cursor_draw_ellipse(Cursor* cursor, double radiusX, double radiusY, bool filled) {
-    if (!cursor || !cursor->active || !cursor->visible) return;
-    draw_ellipse(cursor->x, cursor->y, radiusX, radiusY, filled, cursor->color);
+    if (!cursor || !cursor->active) return;
+    draw_ellipse((int)cursor->x, (int)cursor->y, (int)radiusX, (int)radiusY, filled, cursor->color, cursor->thickness);
 }

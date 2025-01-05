@@ -46,5 +46,8 @@ extern SDL_Color sky_blue;     // RGB(135, 206, 235)
 extern SDL_Color olive;        // RGB(128, 128, 0)
 extern SDL_Color salmon;       // RGB(250, 128, 114)
 extern SDL_Color beige;        // RGB(245, 245, 220)
+extern SDL_Color yellow;       // RGB(255, 255, 0)
+
+
 
 #endif /* DRAWPP_COLORS_H */
