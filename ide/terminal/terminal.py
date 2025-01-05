@@ -1,157 +1,246 @@
 import sys
 import os
-# Ajoute la racine du projet au PYTHONPATH
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-import cmd
 import subprocess
+import threading
+import tkinter as tk
 from compiler.lexer.lexer import Lexer
-from compiler.lexer.tokens import Token, TokenType
 from compiler.parser.parser import Parser
 from compiler.parser.syntax_tree import *
+from cmd import Cmd
 
-class DrawTerminal(cmd.Cmd):
-    # Message d'introduction affiché lorsque le terminal démarre
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+
+class InteractiveTerminal(tk.Text):
+    """
+    A terminal widget that interacts with a subprocess.
+    """
+
+    def __init__(self, parent, command, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.command = command
+        self.process = None
+        self.thread = None
+
+        # Start the subprocess
+        self.start_subprocess()
+
+        # Bind Enter key to send input
+        self.bind("<Return>", self.send_input)
+
+    def start_subprocess(self):
+        """
+        Starts the subprocess and a thread to read its output.
+        """
+        self.process = subprocess.Popen(
+            self.command,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1
+        )
+
+        # Start a thread to read subprocess output
+        self.thread = threading.Thread(target=self.read_output, daemon=True)
+        self.thread.start()
+
+    def close_subprocess(self):
+        """
+        Terminates the subprocess if it's running.
+        """
+        if self.process and self.process.poll() is None:  # Check if process is running
+            self.process.terminate()
+            self.process.wait()
+
+    def read_output(self):
+        """
+        Reads output from the subprocess and displays it in the terminal.
+        """
+        for line in self.process.stdout:
+            self.insert(tk.END, line)
+            self.see(tk.END)
+
+    def send_input(self, event=None):
+        """
+        Sends input to the subprocess.
+        """
+        input_line = self.get("insert linestart", "insert lineend")
+        self.process.stdin.write(input_line + "\n")
+        self.process.stdin.flush()
+        self.insert(tk.END, "\n")  # Move to the next line
+        return "break"  # Prevent default behavior of the Enter key
+
+class DrawTerminal(Cmd):
+    """
+    Terminal interactif pour Draw++ avec commandes intégrées.
+    """
     intro = "Bienvenue dans le terminal Draw++ ! Tapez 'help' pour la liste des commandes."
     prompt = "draw++> "
 
-    def do_help(self, line):
-        """Affiche l'aide pour les commandes."""
-        print("Liste des commandes disponibles :")
-        print(" - lex       : Analyse lexicale d'une ligne de code")
-        print(" - parse     : Analyse syntaxique d'un code complet")
-        print(" - see       : Affiche les fichiers à charger")
-        print(" - load      : Charge un fichier Draw++ et l'analyse")
-        print(" - save      : Sauvegarde du code source, des tokens ou de l'AST dans un fichier")
-        print(" - run       : Exécute le code et affiche le résultat")
-        print(" - debug     : Débogue le programme étape par étape")
-        print(" - compile   : Vérification sémantique et compilation")
-        print(" - history   : Affiche l'historique des commandes")
-        print(" - clear     : Efface l'écran du terminal")
-        print(" - exit      : Quitte le terminal")
+    def __init__(self, terminal_widget=None):
+        """
+        Initialise le terminal interactif.
 
-
-    def __init__(self):
+        Args:
+            terminal_widget (tk.Text, optional): Widget pour rediriger la sortie du terminal.
+        """
         super().__init__()
+        self.terminal_widget = terminal_widget  # Widget pour rediriger les sorties
         self.source_code = None
         self.tokens = None
         self.ast = None
         self.check_imports()
 
+    def print_to_terminal(self, message):
+        """
+        Affiche un message dans le widget terminal ou dans le shell si aucun widget n'est attaché.
+
+        Args:
+            message (str): Le message à afficher.
+        """
+        if self.terminal_widget:
+            # Ajoute un saut de ligne avant et après chaque message
+            self.terminal_widget.insert("end", "\n" + message + "\n")
+            self.terminal_widget.see("end")
+        else:
+            print("\n" + message + "\n")
+
     def check_imports(self):
-        print("=== Vérification des importations ===")
+        """
+        Vérifie que les classes nécessaires sont bien importées.
+        """
+        self.print_to_terminal("=== Vérification des importations ===")
         try:
-            print("Program class:", Program)
-            print("VarDecl class:", VarDecl)
-            print("Assign class:", Assign)
-            print("Num class:", Num)
-            print("StringLiteral class:", StringLiteral)
-            print("BooleanLiteral class:", BooleanLiteral)
-            print("BinOp class:", BinOp)
-            print("Var class:", Var)
-            print("Toutes les classes sont correctement importées.")
+            self.print_to_terminal(f"Classes vérifiées :\nProgram: {Program}, VarDecl: {VarDecl}")
         except NameError as e:
-            print("Erreur d'importation :", e)
+            self.print_to_terminal(f"Erreur d'importation : {e}")
+
+    def do_help(self, arg):
+        """
+        Affiche l'aide des commandes disponibles.
+        Syntaxe : help [commande]
+        """
+        if arg:
+            # Affiche l'aide pour une commande spécifique
+            func = getattr(self, f"do_{arg}", None)
+            if func and func.__doc__:
+                self.print_to_terminal(func.__doc__)
+            else:
+                self.print_to_terminal(f"Aucune aide trouvée pour '{arg}'.")
+        else:
+            # Affiche la liste des commandes disponibles
+            commands = [attr[3:] for attr in dir(self) if attr.startswith('do_')]
+            self.print_to_terminal("=== Commandes disponibles ===")
+            for cmd in commands:
+                self.print_to_terminal(f"{cmd} - {getattr(self, f'do_{cmd}').__doc__.strip().splitlines()[0]}")
 
     def do_lex(self, line):
-        """Analyse lexicale d'une ligne de code."""
+        """
+        Effectue l'analyse lexicale d'une ligne de code.
+        Syntaxe : lex <code>
+        """
         if not line.strip():
-            print("Erreur : Veuillez fournir une ligne de code.")
+            self.print_to_terminal("Erreur : Fournissez une ligne de code.")
             return
 
         try:
             lexer = Lexer(line)
             self.tokens = lexer.tokenize()
-            print("Tokens générés :")
+            self.print_to_terminal("=== Tokens générés ===")
             for token in self.tokens:
-                print(token)
-        except ValueError as e:
-            print(f"Erreur lexicale : {e}")
+                self.print_to_terminal(str(token))
         except Exception as e:
-            print(f"Erreur inattendue : {e}")
+            self.print_to_terminal(f"Erreur lexicale : {e}")
 
     def do_parse(self, line):
         """
-        Analyse syntaxique d'une ligne ou d'un bloc de code et affiche l'AST généré.
+        Effectue l'analyse syntaxique d'une ligne de code et génère un AST.
+        Syntaxe : parse <code>
         """
         if not line.strip():
-            print("Erreur : Veuillez fournir une ligne ou un bloc de code.")
+            self.print_to_terminal("Erreur : Fournissez une ligne ou un bloc de code.")
             return
 
         try:
             lexer = Lexer(line)
             self.tokens = lexer.tokenize()
-            print("=== Tokens générés ===")
-            for token in self.tokens:
-                print(token)
-
             parser = Parser(self.tokens)
             self.ast = parser.parse()
-
-            if isinstance(self.ast, Program):
-                print("\n=== Analyse syntaxique réussie ===")
-                print("AST généré :")
-                print(self.ast)
-            else:
-                print("Erreur : Aucun AST n'a été généré ou le format est incorrect.")
-
-            self.source_code = line
+            self.print_to_terminal("=== AST généré ===")
+            self.print_to_terminal(str(self.ast))
         except Exception as e:
-            print(f"\nErreur lors de l'analyse syntaxique : {e}")
+            self.print_to_terminal(f"Erreur syntaxique : {e}")
+
+    def do_run(self, line):
+        """
+        Exécute le code Draw++ fourni.
+        Syntaxe : run <chemin_fichier> | run -c <code>
+        """
+        args = line.split(maxsplit=1)
+        if not args:
+            self.print_to_terminal("Erreur : Fournissez un chemin ou du code.")
+            return
+
+        try:
+            if args[0] == "-c":
+                source_code = args[1]
+                self.run_code(source_code=source_code)
+            else:
+                source_file = args[0]
+                self.run_code(source_file=source_file)
+        except Exception as e:
+            self.print_to_terminal(f"Erreur d'exécution : {e}")
 
     def run_code(self, source_code=None, source_file=None):
         """
-        Compile et exécute le code Draw++ fourni, ou le contenu d'un fichier.
+        Compile et exécute du code Draw++.
 
         Args:
-            source_code (str, optional): Le code Draw++ à exécuter.
-            source_file (str, optional): Le chemin d'un fichier Draw++ à exécuter.
+            source_code (str, optional): Code Draw++ à exécuter.
+            source_file (str, optional): Chemin du fichier Draw++ à exécuter.
         """
+        if not source_code and not source_file:
+            self.print_to_terminal("Erreur : Fournissez une source de code.")
+            return
+
+        # Sauvegarde le code temporaire si nécessaire
+        temp_file = "temp.dpp"
+        if source_code:
+            with open(temp_file, "w") as f:
+                f.write(source_code)
+            source_file = temp_file
+
+        # Compile et exécute
         try:
-            # Vérifie que l'une des sources est fournie
-            if source_code is None and source_file is None:
-                print("[ERROR] Aucune source de code fournie.")
-                return
-
-            # Si le code est fourni directement, sauvegarde dans un fichier temporaire
-            if source_code is not None:
-                source_file = "temp.dpp"
-                with open(source_file, "w") as file:
-                    file.write(source_code)
-
-            # Temporary output C file and executable name
-            output_file = "temp.c"
+            c_file = "temp.c"
             executable = "temp_program"
+            compile_cmd = f"python -m compiler.compiler {source_file} -o {c_file}"
+            gcc_cmd = f"gcc -I../lib/DPP/include -I../lib/SDL2/include -L../lib -o {executable} {c_file} -ldrawpp -lSDL2 -lm"
+            run_cmd = f"./{executable}"
 
-            # Commands to compile Draw++ and C code
-            compile_drawpp_command = f"python -m compiler.compiler {source_file} -o {output_file}"
-            compile_c_command = f"gcc -I../lib/DPP/include -I../lib/SDL2/include -L../lib -o {executable} {output_file} -ldrawpp -lSDL2 -lm"
-            run_command = f"./{executable}"
-
-            # Compile Draw++ to C
-            print(f"[INFO] Compiling Draw++ file: {source_file}")
-            if os.system(compile_drawpp_command) != 0:
-                print("[ERROR] Compilation Draw++ to C failed.")
+            # Compilation Draw++ vers C
+            self.print_to_terminal(f"Compilation : {compile_cmd}")
+            result = subprocess.run(compile_cmd.split(), capture_output=True, text=True)
+            if result.returncode != 0:
+                self.print_to_terminal(f"Erreur de compilation Draw++ : {result.stderr}")
                 return
 
-            # Compile the C code to an executable
-            print(f"[INFO] Compiling C file: {output_file}")
-            if os.system(compile_c_command) != 0:
-                print("[ERROR] Compilation C to executable failed.")
+            # Compilation C vers exécutable
+            self.print_to_terminal(f"Compilation : {gcc_cmd}")
+            result = subprocess.run(gcc_cmd.split(), capture_output=True, text=True)
+            if result.returncode != 0:
+                self.print_to_terminal(f"Erreur de compilation C : {result.stderr}")
                 return
 
-            # Set the DISPLAY environment variable and execute the program
-            print("[INFO] Running the executable...")
-            os.environ["DISPLAY"] = ":0"
-            os.system(run_command)
-
-            print("[INFO] Execution completed successfully.")
-
-        except Exception as e:
-            print(f"[ERROR] Exception during execution: {e}")
-
+            # Exécution
+            self.print_to_terminal("Exécution de l'exécutable...")
+            result = subprocess.run(run_cmd.split(), capture_output=True, text=True)
+            self.print_to_terminal(result.stdout)
+            if result.returncode != 0:
+                self.print_to_terminal(f"Erreur d'exécution : {result.stderr}")
         finally:
-            # Cleanup temporary files
-            self.cleanup_temp_files([source_file, output_file, executable])
+            self.cleanup_temp_files([temp_file, c_file, executable])
 
     def cleanup_temp_files(self, files):
         """
@@ -161,168 +250,52 @@ class DrawTerminal(cmd.Cmd):
             files (list): Liste des fichiers à supprimer.
         """
         for file in files:
-            try:
-                if file and os.path.exists(file):
-                    os.remove(file)
-            except Exception as e:
-                print(f"[WARNING] Failed to remove {file}: {e}")
-
-
-    def do_run(self, line):
-        """
-        Exécute un fichier ou une ligne de code Draw++.
-
-        Syntaxe :
-            run <nom_fichier>     - Exécute un fichier Draw++.
-            run -c <code>         - Exécute directement une ligne de code.
-        """
-        args = line.split(maxsplit=1)
-        if not args:
-            print("[ERROR] Commande invalide. Utilisez 'run <nom_fichier>' ou 'run -c <code>'.")
-            return
-
-        try:
-            if args[0] == "-c" and len(args) > 1:
-                # Exécute le code directement
-                self.run_code(source_code=args[1])
-            else:
-                # Exécute un fichier Draw++
-                source_file = args[0]
-                if not source_file.endswith(".dpp"):
-                    source_file += ".dpp"
-
-                if not os.path.exists(source_file):
-                    print(f"[ERROR] Fichier '{source_file}' introuvable.")
-                    return
-
-                self.run_code(source_file=source_file)
-
-        except Exception as e:
-            print(f"[ERROR] Exception during execution: {e}")
-
-    def do_see(self, line):
-        """
-        Liste les fichiers disponibles dans le répertoire pour chargement.
-        """
-        directory = "examples"
-        try:
-            if not os.path.exists(directory):
-                print(f"Répertoire '{directory}' introuvable.")
-                return
-
-            files = os.listdir(directory)
-            if not files:
-                print(f"Aucun fichier trouvé dans '{directory}'.")
-                return
-
-            print(f"Fichiers disponibles dans '{directory}' :")
-            for file in files:
-                print(f" - {file}")
-        except Exception as e:
-            print(f"Erreur lors de la lecture du répertoire : {e}")
+            if os.path.exists(file):
+                os.remove(file)
 
     def do_save(self, line):
         """
         Sauvegarde le code source, les tokens ou l'AST dans un fichier.
-        Syntaxe : save [source|tokens|ast] <nom_fichier>
+        Syntaxe : save <type> <nom_fichier>
         """
         args = line.split()
         if len(args) != 2:
-            print("Erreur : Syntaxe incorrecte. Utilisation : save [source|tokens|ast] <nom_fichier>")
+            self.print_to_terminal("Erreur : Syntaxe incorrecte. Utilisation : save <type> <nom_fichier>")
             return
 
         save_type, filename = args
-        directory = "saves"
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        filepath = os.path.join(directory, filename)
-
         try:
-            if save_type == "source":
-                if self.source_code is None:
-                    print("Erreur : Aucun code source à sauvegarder.")
-                    return
-                with open(filepath, "w") as file:
-                    file.write(self.source_code)
-                print(f"Code source sauvegardé dans {filepath}.")
-
-            elif save_type == "tokens":
-                if self.tokens is None:
-                    print("Erreur : Aucun token à sauvegarder.")
-                    return
-                with open(filepath, "w") as file:
+            if save_type == "source" and self.source_code:
+                with open(filename, "w") as f:
+                    f.write(self.source_code)
+            elif save_type == "tokens" and self.tokens:
+                with open(filename, "w") as f:
                     for token in self.tokens:
-                        file.write(str(token) + "\n")
-                print(f"Tokens sauvegardés dans {filepath}.")
-
-            elif save_type == "ast":
-                if self.ast is None:
-                    print("Erreur : Aucun AST à sauvegarder.")
-                    return
-                with open(filepath, "w") as file:
-                    file.write(str(self.ast))
-                print(f"AST sauvegardé dans {filepath}.")
-
+                        f.write(str(token) + "\n")
+            elif save_type == "ast" and self.ast:
+                with open(filename, "w") as f:
+                    f.write(str(self.ast))
             else:
-                print("Erreur : Type de sauvegarde inconnu. Utilisation : save [source|tokens|ast] <nom_fichier>")
-
+                self.print_to_terminal("Erreur : Données inexistantes à sauvegarder.")
         except Exception as e:
-            print(f"Erreur lors de la sauvegarde : {e}")
+            self.print_to_terminal(f"Erreur de sauvegarde : {e}")
 
-    def do_load(self, filepath):
+    def do_clear(self, _):
         """
-        @brief Charge un fichier Draw++ (.dpp) et l'analyse.
-
-        @param filepath Chemin du fichier à charger.
+        Efface l'écran.
         """
-        directory = "saves"
-        if not filepath.strip():
-            print("Erreur : Veuillez fournir le nom d'un fichier.")
-            return
-
-        filepath = os.path.join(directory, filepath)
-        if not filepath.endswith(".dpp"):
-            filepath += ".dpp"
-
-        try:
-            with open(filepath, 'r') as file:
-                content = file.read()
-
-            print(f"\n=== Contenu du fichier {filepath} ===")
-            print(content)
-
-            lexer = Lexer(content)
-            self.tokens = lexer.tokenize()
-
-            print("\n=== Tokens générés ===")
-            for token in self.tokens:
-                print(token)
-
-            parser = Parser(self.tokens)
-            self.ast = parser.parse()
-
-            print("\n=== Analyse syntaxique réussie ===")
-            print("AST généré :")
-            print(self.ast)
-
-            self.source_code = content
-        except FileNotFoundError:
-            print(f"Erreur : Le fichier '{filepath}' est introuvable.")
-        except ValueError as e:
-            print(f"Erreur lors de l'analyse lexicale : {e}")
-        except Exception as e:
-            print(f"Erreur lors de l'analyse syntaxique : {e}")
-
-
+        if self.terminal_widget:
+            self.terminal_widget.delete("1.0", "end")
+        else:
+            os.system("clear")
 
     def do_exit(self, _):
-        """Quitte le terminal."""
-        print("Au revoir !")
+        """
+        Quitte le terminal.
+        """
+        self.print_to_terminal("Au revoir !")
         return True
 
-# Démarre le terminal
+
 if __name__ == "__main__":
     DrawTerminal().cmdloop()
-

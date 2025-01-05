@@ -4,6 +4,7 @@ from PIL import Image, ImageTk  # Pour afficher l'image générée
 from ide.config.settings import THEME_COLORS, FONT_FAMILY, FONT_SIZE
 from ide.utils.error_analyzer import ErrorAnalyzer
 from ide.utils.file_manager import save_file, file_paths
+from ide.terminal.terminal import DrawTerminal
 
 # when you open a new tab, this is the default code
 initial_content = 'var int windowHeight = 500;\nvar int windowWidth = 500;'
@@ -74,7 +75,6 @@ class ErrorHighlighter:
         else:
             self.suggestion_tags[tag_name] = [suggestion]
 
-
 class LineNumbers(tk.Canvas):
     """
     @brief Widget for displaying line numbers.
@@ -129,7 +129,6 @@ class LineNumbers(tk.Canvas):
             )
             temp = self.text_widget.index(f"{temp}+1line")
 
-
 class EnhancedText(tk.Text):
     """
     @brief Enhanced text widget with error highlighting and suggestions.
@@ -152,6 +151,32 @@ class EnhancedText(tk.Text):
         self.after_id = None
         self.tooltip = None
 
+    def attach_terminal(self, terminal_output, terminal_input):
+        """
+        @brief Attaches the terminal's output and input streams to this widget.
+        @param terminal_output The terminal's output (stdout).
+        @param terminal_input The terminal's input (stdin).
+        """
+        self.terminal_output = terminal_output
+        self.terminal_input = terminal_input
+
+    def write_to_terminal(self, message):
+        """
+        @brief Writes a message to the terminal's input stream.
+        @param message The message to write.
+        """
+        if self.terminal_input:
+            self.terminal_input.write(message + "\n")
+            self.terminal_input.flush()
+
+    def read_from_terminal(self):
+        """
+        @brief Reads a message from the terminal's output stream.
+        """
+        if self.terminal_output:
+            return self.terminal_output.read()
+        return ""
+
     def _on_text_change(self, event=None):
         """
         @brief Handles text change events and schedules code analysis.
@@ -171,19 +196,19 @@ class EnhancedText(tk.Text):
         if not code.strip():
             return
 
-        success, error_msg, suggestions = self.error_analyzer.analyze_code(
-            code)
+        success, error_msg, suggestions = self.error_analyzer.analyze_code(code)
 
         if not success:
-            line_num = self.error_analyzer._extract_line_number(
-                error_msg, code)
+            line_num = self.error_analyzer._extract_line_number(error_msg, code)
             self.highlighter.highlight_error(
-                f"{line_num}.0", f"{line_num}.end", error_msg)
+                f"{line_num}.0", f"{line_num}.end", error_msg
+            )
 
             if suggestions and line_num in suggestions:
                 for suggestion in suggestions[line_num]:
                     self.highlighter.add_suggestion(
-                        f"{line_num}.0", suggestion)
+                        f"{line_num}.0", suggestion
+                    )
 
     def _show_suggestion_menu(self, event):
         """
@@ -218,7 +243,8 @@ class EnhancedText(tk.Text):
 
                 fix_menu = tk.Menu(menu, tearoff=0)
                 suggestions = self.highlighter.suggestion_tags.get(
-                    f"suggestion_{line_num}.0", [])
+                    f"suggestion_{line_num}.0", []
+                )
                 if isinstance(suggestions, str):
                     suggestions = [suggestions]
 
@@ -226,7 +252,8 @@ class EnhancedText(tk.Text):
                     fix_menu.add_command(
                         label=suggestion,
                         command=lambda s=suggestion: self._apply_suggestion(
-                            line_num, s),
+                            line_num, s
+                        ),
                         foreground="green",
                         background="#eeffee"
                     )
@@ -270,12 +297,14 @@ class EnhancedText(tk.Text):
 
                     if error_line == line_num:
                         error_msg = self.highlighter.error_tags.get(
-                            tag, "Syntax error")
+                            tag, "Syntax error"
+                        )
 
                         self.tooltip = tk.Toplevel(self)
                         self.tooltip.wm_overrideredirect(True)
                         self.tooltip.wm_geometry(
-                            f"+{event.x_root + 10}+{event.y_root + 10}")
+                            f"+{event.x_root + 10}+{event.y_root + 10}"
+                        )
 
                         label = tk.Label(
                             self.tooltip,
@@ -291,9 +320,11 @@ class EnhancedText(tk.Text):
                         label.pack()
 
                         self.tooltip.bind(
-                            '<Leave>', lambda e: self.tooltip.destroy())
+                            '<Leave>', lambda e: self.tooltip.destroy()
+                        )
                         self.bind(
-                            '<Leave>', lambda e: self.tooltip.destroy() if self.tooltip else None)
+                            '<Leave>', lambda e: self.tooltip.destroy() if self.tooltip else None
+                        )
                         break
                 except (IndexError, ValueError):
                     continue
@@ -301,28 +332,34 @@ class EnhancedText(tk.Text):
 
 def add_tab(notebook, title="Untitled"):
     """
-    @brief Adds a new tab with an enhanced editor and preview area to a Notebook widget.
+    @brief Adds a new tab with an enhanced editor, preview area, and terminal in a vertical layout.
 
-    @param notebook The ttk.Notebook widget to add the tab to.
-    @param title The title of the new tab. Defaults to "Untitled".
-    @return A tuple containing the Text widget for the editor and the tab's frame.
+    @param notebook (ttk.Notebook): The notebook widget to which the new tab will be added.
+    @param title (str): The title of the new tab. Defaults to "Untitled".
+
+    @return tuple: A tuple containing the editor widget and the frame of the newly created tab.
     """
+    # Frame for the tab
     frame = ttk.Frame(notebook)
     frame.configure(style="TFrame")
 
-    paned_window = tk.PanedWindow(
+    # PanedWindow for layout (horizontal split between editor and right pane)
+    main_paned_window = tk.PanedWindow(
         frame,
         orient=tk.HORIZONTAL,
         bg=THEME_COLORS["border"],
         sashwidth=5
     )
-    paned_window.pack(fill=tk.BOTH, expand=True)
+    main_paned_window.pack(fill=tk.BOTH, expand=True)
 
-    editor_frame = tk.Frame(paned_window, bg=THEME_COLORS["bg"])
+    # Editor Frame
+    editor_frame = tk.Frame(main_paned_window, bg=THEME_COLORS["bg"])
 
+    # Line numbers widget
     line_numbers = LineNumbers(editor_frame, width=40)
     line_numbers.pack(side=tk.LEFT, fill=tk.Y)
 
+    # Enhanced text editor
     editor = EnhancedText(
         editor_frame,
         wrap=tk.NONE,
@@ -336,18 +373,27 @@ def add_tab(notebook, title="Untitled"):
         undo=True,
         maxundo=-1
     )
-    
+
     if initial_content:
         editor.insert("1.0", initial_content)
-    
+
     editor.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=(5, 5))
 
     line_numbers.attach(editor)
 
     editor_frame.pack(fill=tk.BOTH, expand=True)
-    paned_window.add(editor_frame)
+    main_paned_window.add(editor_frame)
 
-    preview_frame = tk.Frame(paned_window, bg=THEME_COLORS["button"])
+    # Right Pane: Contains a vertical PanedWindow for preview and terminal
+    right_paned_window = tk.PanedWindow(
+        main_paned_window,
+        orient=tk.VERTICAL,
+        bg=THEME_COLORS["border"],
+        sashwidth=5
+    )
+
+    # Preview Frame
+    preview_frame = tk.Frame(right_paned_window, bg=THEME_COLORS["button"])
     preview_label = tk.Label(
         preview_frame,
         text="Preview Area",
@@ -355,23 +401,77 @@ def add_tab(notebook, title="Untitled"):
         fg=THEME_COLORS["fg"]
     )
     preview_label.pack(fill=tk.BOTH, expand=True)
+    right_paned_window.add(preview_frame)
 
-    paned_window.add(preview_frame)
+    # Terminal Frame
+    terminal_frame = tk.Frame(right_paned_window, bg=THEME_COLORS["bg"])
+    terminal_label = tk.Label(
+        terminal_frame,
+        text="Integrated Terminal",
+        bg=THEME_COLORS["bg"],
+        fg=THEME_COLORS["fg"]
+    )
+    terminal_label.pack(fill=tk.X)
 
-    paned_window.paneconfigure(editor_frame, minsize=300)
-    paned_window.paneconfigure(preview_frame, minsize=200)
+    # Terminal text widget
+    terminal_widget = tk.Text(
+        terminal_frame,
+        wrap=tk.WORD,
+        bg="black",
+        fg="white",
+        insertbackground="white"
+    )
+    terminal_widget.pack(fill=tk.BOTH, expand=True)
 
-    frame.paned_window = paned_window
+    # Create an instance of DrawTerminal and connect it to the terminal widget
+    draw_terminal = DrawTerminal(terminal_widget=terminal_widget)
+
+    # Configure terminal input
+    terminal_widget.bind(
+        "<Return>",
+        lambda event: execute_terminal_command(draw_terminal, terminal_widget)
+    )
+
+    right_paned_window.add(terminal_frame)
+
+    # Add the right pane (preview + terminal) to the main PanedWindow
+    main_paned_window.add(right_paned_window)
+
+    # Configure sizes of panes
+    main_paned_window.paneconfigure(editor_frame, minsize=300)
+    right_paned_window.paneconfigure(preview_frame, minsize=200)
+    right_paned_window.paneconfigure(terminal_frame, minsize=200)
+
+    # Pack the frame into the notebook
+    frame.paned_window = main_paned_window
     frame.editor = editor
     frame.preview_frame = preview_frame
     frame.preview_label = preview_label
+    frame.terminal = draw_terminal
 
     notebook.add(frame, text=title)
     notebook.select(frame)
 
-    line_numbers.update_line_numbers()
-
     return editor, frame
+
+
+def execute_terminal_command(draw_terminal, terminal_widget):
+    """
+    @brief Sends the command from the terminal widget to the DrawTerminal instance.
+
+    @param draw_terminal (DrawTerminal): Instance of DrawTerminal to execute the command.
+    @param terminal_widget (tk.Text): The widget from which to read the command.
+    """
+    input_line = terminal_widget.get("insert linestart", "insert lineend").strip()
+
+    terminal_widget.insert(tk.END, "\n")
+    terminal_widget.see(tk.END)
+
+    draw_terminal.onecmd(input_line)
+
+    terminal_widget.insert(tk.END, "\n")
+    terminal_widget.see(tk.END)
+
 
 def close_tab(notebook):
     """
@@ -387,32 +487,34 @@ def close_tab(notebook):
         result = messagebox.askyesnocancel("Close Tab", "Do you want to save changes before closing?")
         if result is None:  # Cancel
             return
-        elif result:  # Yes
+        elif result:  # Yes:
             save_file(notebook)
 
     notebook.forget(current_tab)
     file_paths.pop(current_frame, None)
 
+
 def update_preview(frame, image_path="output.bmp"):
     """
     @brief Updates the preview area with the generated image.
+
     @param frame The frame containing the preview area.
     @param image_path The path to the generated image.
     """
     try:
         image = Image.open(image_path)
-        orig_width, orig_height = image.size # PIL lib
+        orig_width, orig_height = image.size
         aspect_ratio = orig_width / orig_height
-        
+
         MAX_WIDTH = 500
         MAX_HEIGHT = 500
-        
-        # respects aspect ratio
+
+        # Respects aspect ratio
         if orig_width > MAX_WIDTH or orig_height > MAX_HEIGHT:
-            if aspect_ratio > 1:  # wider than tall
+            if aspect_ratio > 1:  # Wider than tall
                 new_width = MAX_WIDTH
                 new_height = int(MAX_WIDTH / aspect_ratio)
-            else:  # taller than wide
+            else:  # Taller than wide
                 new_height = MAX_HEIGHT
                 new_width = int(MAX_HEIGHT * aspect_ratio)
         else:
@@ -425,6 +527,6 @@ def update_preview(frame, image_path="output.bmp"):
         frame.preview_label.configure(image=photo, text="")
         frame.preview_label.image = photo
 
-        
     except Exception as e:
         print(f"Error updating preview: {e}")
+
