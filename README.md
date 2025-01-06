@@ -129,7 +129,7 @@ To begin with Draw++, follow the steps below to set up your environment and star
 
 ### Key Constructs
 
-- **Variables and Constants:** Define and use values with `var` and `const`.
+- **Variables and Constants:** Define and use values with `var`.
 - **Control Flow:** Use `if`, `else`, `while`, and `for` loops for dynamic behavior.
 - **Drawing Tools:** Control a `cursor` to draw lines, circles, and more.
 
@@ -151,3 +151,69 @@ The Draw++ IDE includes:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
+
+## Terminal Features
+
+The Draw++ terminal is a powerful and interactive component that enhances the development experience by providing a seamless way to execute and debug Draw++ code. This terminal is specifically designed to cater to the needs of developers working with the Draw++ language.
+
+### Key Features of the Terminal
+
+- **Interactive Command Execution**:
+  The terminal allows users to execute commands interactively. Whether you need to debug, analyze, or run Draw++ code, the terminal is equipped to handle it all.
+
+- **Lexical and Syntax Analysis**:
+  Perform lexical analysis using the `lex` command to tokenize Draw++ code and syntax analysis with the `parse` command to generate an abstract syntax tree (AST). These features help identify errors in the early stages of development.
+
+  Example:
+  ```
+  draw++> lex var int x = 10;
+  === Generated Tokens ===
+  Token(type='VAR', value='var')
+  Token(type='INT', value='int')
+  Token(type='IDENTIFIER', value='x')
+  Token(type='ASSIGN', value='=')
+  Token(type='INTEGER', value='10')
+  Token(type='SEMICOLON', value=';')
+  ```
+
+- **Debugging and Error Detection**:
+  The terminal supports debugging with commands such as `debug` to analyze Draw++ files or inline code for errors. It provides detailed feedback, making error resolution straightforward.
+
+  Example:
+  ```
+  draw++> debug example.dpp
+  [INFO] Lexical Analysis Passed.
+  [INFO] Syntax Analysis Passed.
+  [INFO] No errors detected.
+  ```
+
+- **Command History**:
+  Maintain a history of executed commands for easy reference and reuse. Use the `history` command to view previously executed commands.
+
+- **File Management**:
+  List available example files in the project directory using the `see` command or save processed data (source code, tokens, or AST) with the `save` command.
+
+- **Customizable Execution**:
+  The `run` command supports executing Draw++ source files or inline code directly. The terminal also compiles and runs the code seamlessly.
+
+  Example:
+  ```
+  draw++> run -c "cursor c = create_cursor(0, 0); c.draw_circle(50, true);"
+  Compiling...
+  Running executable...
+  [Output]: Circle drawn successfully.
+  ```
+
+### Integration with the Draw++ IDE
+
+The terminal is tightly integrated with the Draw++ IDE, allowing developers to:
+- Execute Draw++ code snippets or entire files.
+- Debug and analyze code in real-time.
+- Enhance productivity with interactive feedback and suggestions.
+- Use advanced tools such as error correction, AST visualization, and dynamic compilation.
+
+### Benefits
+
+- **Real-Time Feedback**: Immediate insights into code behavior and errors.
+- **Simplified Debugging**: Streamlined commands for analyzing and fixing issues.
+- **Enhanced Productivity**: Combines the power of a traditional terminal with domain-specific tools for Draw++.
