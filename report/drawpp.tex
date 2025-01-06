@@ -38,7 +38,7 @@
     keywordstyle=\color{black},
     stringstyle=\color{black},
     commentstyle=\color{black},
-    literate={é}{{\'e}}1 {è}{{\`e}}1 {à}{{\`a}}1,
+    literate={e}{{\'e}}1 {è}{{\`e}}1 {à}{{\`a}}1,
     frame=single,
     breaklines=true
 }
@@ -62,136 +62,49 @@
 \tableofcontents
 
 \chapter{Introduction}
-Draw++ est un langage de programmation spécialement conçu pour la création graphique, visant à simplifier l'interaction avec des éléments visuels à travers un ensemble d'instructions simples et intuitives. Ce langage a été conçu pour offrir une approche accessible et directe de la programmation graphique, permettant aux utilisateurs de dessiner des formes.\\
+Draw++ est un langage de programmation specialement conçu pour la creation graphique, visant à simplifier l'interaction avec des elements visuels à travers un ensemble d'instructions simples et intuitives. Ce langage a ete conçu pour offrir une approche accessible et directe de la programmation graphique, permettant aux utilisateurs de dessiner des formes.\\
 
-Le projet inclut non seulement le langage de programmation proprement dit, mais aussi un environnement de développement intégré (IDE) spécialement conçu pour faciliter l'écriture, le test, et le débogage du code. L'IDE permet aux utilisateurs de visualiser immédiatement l'effet de leur code sur des graphiques à l'écran, favorisant une approche interactive et réactive de la programmation. Grâce à des fonctionnalités telles que la coloration des erreurs syntaxiques, le débogage et la gestion des erreurs, l'IDE rend l'expérience de programmation plus intuitive et accessible, même pour les débutants.
+Le projet inclut non seulement le langage de programmation proprement dit, mais aussi un environnement de developpement integre (IDE) specialement conçu pour faciliter l'ecriture, le test, et le debogage du code. L'IDE permet aux utilisateurs de visualiser immediatement l'effet de leur code sur des graphiques à l'ecran, favorisant une approche interactive et reactive de la programmation. Grâce à des fonctionnalites telles que la coloration des erreurs syntaxiques, le debogage et la gestion des erreurs, l'IDE rend l'experience de programmation plus intuitive et accessible, même pour les debutants.
 
 \chapter{La Syntaxe du Langage}
 
 \section{Grammaire BNF du Langage Draw++}
-Voici la grammaire formelle du langage Draw++ exprimée en notation BNF :
-\begin{lstlisting}
-<drawpp_program> ::= <statement_list>
+Voici la grammaire formelle du langage Draw++ exprimee en notation BNF :
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{assets/code/bnf1.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/code/bnf2-3.png}
+\end{figure}
 
-<statement_list> ::= <statement> ";" | <statement> ";" <statement_list>
 
-<statement> ::= <variable_declaration>
-              | <constant_declaration>
-              | <assignment>
-              | <compound_assignment>
-              | <if_statement>
-              | <loop_statement>
-              | <cursor_statement>
-              | <shape_statement>
-              | <comment>
-
-<variable_declaration> ::= "var" <type> <identifier> "=" <expression>
-
-<type> ::= "int" | "float" | "bool" | "color"
-
-<assignment> ::= <identifier> "=" <expression>
-<compound_assignment> ::= <identifier> <compound_operator> <expression>
-<compound_operator> ::= "+=" | "-=" | "*=" | "/="
-
-<if_statement> ::= "if" "(" <condition> ")" "{" <statement_list> "}"
-                  [ <elif_chain> ]
-                  [ "else" "{" <statement_list> "}" ]
-
-<elif_chain> ::= "elif" "(" <condition> ")" "{" <statement_list> "}" [ <elif_chain> ]
-
-<loop_statement> ::= <for_loop> | <while_loop>
-
-<for_loop> ::= "for" "(" [ <variable_declaration> ] ";" <condition> ";" [ <assignment> ] ")"
-               "{" <statement_list> "}"
-
-<while_loop> ::= "while" "(" <condition> ")" "{" <statement_list> "}"
-
-<cursor_statement> ::= <cursor_creation>
-                    | <cursor_movement>
-                    | <cursor_style>
-                    | <cursor_visibility>
-
-<cursor_creation> ::= "cursor" <identifier> "=" "create_cursor" "(" <expression> "," <expression> ")"
-
-<cursor_movement> ::= <identifier> "." ( <move> | <rotate> | <position> )
-<move> ::= "move" "(" <expression> ")"
-<rotate> ::= "rotate" "(" <expression> ")"
-<position> ::= "position" "(" <expression> "," <expression> ")"
-
-<cursor_style> ::= <identifier> "." ( <color> | <thickness> )
-<color> ::= "color" "(" <color_value> ")"
-<thickness> ::= "thickness" "(" <expression> ")"
-
-<cursor_visibility> ::= <identifier> "." "visible" "()"
-
-<shape_statement> ::= <identifier> "." <shape_type>
-
-<shape_type> ::= <draw_line> | <draw_rectangle> | <draw_circle> | <draw_triangle> | <draw_ellipse>
-
-<draw_line> ::= "draw_line" "(" <expression> ")"
-
-<draw_rectangle> ::= "draw_rectangle" "(" <expression> "," <expression> "," <bool_value> ")"
-
-<draw_circle> ::= "draw_circle" "(" <expression> "," <bool_value> ")"
-
-<draw_triangle> ::= "draw_triangle" "(" <expression> "," <expression> "," <bool_value> ")"
-
-<draw_ellipse> ::= "draw_ellipse" "(" <expression> "," <expression> "," <bool_value> ")"
-
-<color_value> ::= <predefined_color> | <custom_color>
-<predefined_color> ::= "BLACK" | "WHITE" | "RED" | "GREEN" | "BLUE"
-                    | "GRAY" | "LIGHT_GRAY" | "DARK_GRAY"
-                    | "ORANGE" | "BROWN" | "PINK" | "CORAL" | "GOLD"
-                    | "PURPLE" | "INDIGO" | "TURQUOISE" | "NAVY" | "TEAL"
-                    | "FOREST_GREEN" | "SKY_BLUE" | "OLIVE" | "SALMON" | "BEIGE" | "YELLOW"
-<custom_color> ::= "rgb" "(" <expression> "," <expression> "," <expression> ")"
-
-<expression> ::= <term> | <term> <operator> <expression>
-<term> ::= <identifier> | <number> | <bool_value> | <string_value>
-
-<condition> ::= <expression> <relational_operator> <expression>
-              | <bool_value>
-              | <identifier>
-
-<operator> ::= "+" | "-" | "*" | "/" | "%"
-<relational_operator> ::= "<" | "<=" | ">" | ">=" | "==" | "!="
-
-<bool_value> ::= "true" | "false"
-
-<comment> ::= <single_line_comment> | <multi_line_comment>
-<single_line_comment> ::= "//" <text> <newline>
-<multi_line_comment> ::= "/*" <text> "*/"
-
-<identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*
-<number> ::= [0-9]+ ( "." [0-9]+ )?
-<text> ::= [^"]*
-<newline> ::= "\n" | "\r\n"
-\end{lstlisting}
 
 \section{Variables Obligatoires}
-Pour garantir un fonctionnement correct, chaque programme Draw++ doit définir les dimensions de la fenêtre graphique au début. Ces dimensions sont spécifiées par deux variables obligatoires :
+Pour garantir un fonctionnement correct, chaque programme Draw++ doit definir les dimensions de la fenêtre graphique au debut. Ces dimensions sont specifiees par deux variables obligatoires :
 \begin{itemize}
-    \item \texttt{windowWidth} : Définit la largeur de la fenêtre.
-    \item \texttt{windowHeight} : Définit la hauteur de la fenêtre.
+    \item \texttt{windowWidth} : Definit la largeur de la fenêtre.
+    \item \texttt{windowHeight} : Definit la hauteur de la fenêtre.
 \end{itemize}
-Voici un exemple de déclaration correcte :
+Voici un exemple de declaration correcte :
 \begin{lstlisting}[language=Draw++]
 var int windowWidth = 500;
 var int windowHeight = 500;
 \end{lstlisting}
-Ces déclarations doivent apparaître avant toute autre instruction. Toute omission entraînera une erreur à l'exécution.
+Ces declarations doivent apparaître avant toute autre instruction. Toute omission entraînera une erreur à l'execution.
 
-\section{Éléments de Base}
+\section{elements de Base}
 
 \subsection{Terminaison des Instructions}
-Chaque instruction doit se terminer par un point-virgule (\texttt{;}) afin de séparer les instructions.
+Chaque instruction doit se terminer par un point-virgule (\texttt{;}) afin de separer les instructions.
 \begin{lstlisting}[language=Draw++]
-var int x = 10;  // Déclaration d'une variable
-cursor.move(100);  // Déplacement du curseur
+var int x = 10;  // Declaration d'une variable
+cursor.move(100);  // Deplacement du curseur
 \end{lstlisting}
 
 \subsection{Commentaires}
-Les commentaires sont ignorés à l'exécution et permettent de documenter le code :
+Les commentaires sont ignores à l'execution et permettent de documenter le code :
 \begin{itemize}
     \item \textbf{Commentaires sur une ligne} : Utilisez \texttt{//}.
     \item \textbf{Commentaires multi-lignes} : Utilisez \texttt{/* ... */}.
@@ -202,55 +115,96 @@ Les commentaires sont ignorés à l'exécution et permettent de documenter le co
    multi-lignes */
 \end{lstlisting}
 
-\subsection{Délimiteurs}
-Les délimiteurs structurent le code et incluent :
+\subsection{Delimiteurs}
+Les delimiteurs structurent le code et incluent :
 \begin{itemize}
-    \item \texttt{\{\}} : Pour délimiter les blocs d'instructions.
+    \item \texttt{\{\}} : Pour delimiter les blocs d'instructions.
     \item \texttt{()} : Pour entourer les arguments des fonctions.
 \end{itemize}
 
 \section{Types et Variables}
 
-\subsection{Déclaration des Variables}
-Les variables sont déclarées avec le mot-clé \texttt{var}, suivi de leur type, de leur nom et de leur valeur initiale.
-\begin{lstlisting}[language=Draw++]
-var int compteur = 0;
-var float pi = 3.14159;
-var color myColor = rgb(255, 0, 0);
-var bool isFilled = true;
-\end{lstlisting}
+\subsection{Declaration des Variables}
+Les variables sont declarees avec le mot-cle \texttt{var}, suivi de leur type, de leur nom et de leur valeur initiale.
+\begin{figure}[H]
+    \includegraphics[width=1\linewidth]{assets/code/variables.png}
+\end{figure}
+
 
 \section{Structures de Contrôle}
 
 \subsection{Conditions}
-Les structures conditionnelles permettent d'exécuter des blocs de code selon des conditions :
+Les structures conditionnelles permettent d'executer des blocs de code selon des conditions :
 \begin{itemize}
-    \item \texttt{if (<condition>) { <bloc d'instructions> }}
-    \item \texttt{elif (<condition>) { <bloc d'instructions> }}
-    \item \texttt{else { <bloc d'instructions> }}
+    \item \begin{verbatim} if (<condition>) { <bloc d'instructions> }\end{verbatim}
+    \item \begin{verbatim} elif (<condition>) { <bloc d'instructions> }\end{verbatim}
+    \item \begin{verbatim} else { <bloc d'instructions> }\end{verbatim}
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/code/if_dpp.png}
+    \caption{\centering Exemple de code conditionnel dans Draw++, montrant l'utilisation de la structure if-elif-else pour determiner la couleur d'un rectangle selon une condition.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{assets/render/if.png}
+    \caption{\centering Rendu graphique correspondant à l'execution du code conditionnel, illustrant le changement de couleur du rectangle.}
+\end{figure}
 \end{itemize}
 
 \subsection{Boucles}
 Draw++ prend en charge deux types de boucles principales :
 \begin{itemize}
-    \item \texttt{while (<condition>) { <bloc d'instructions> }}
-    \item \texttt{for (<initialisation>; <condition>; <mise à jour>) { <bloc d'instructions> }}
+    \item \begin{verbatim} while (<condition>) { <bloc d'instructions> } \end{verbatim}
+
+    \begin{figure}[H]
+    \includegraphics[width=1\linewidth]{assets/code/While_dpp.png}
+    \caption{\centering Exemple d'utilisation de la boucle while pour dessiner des carres imbriques.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\linewidth]{assets/render/while.png}
+    \caption{\centering Rendu graphique montrant le resultat de la boucle while, illustrant des carres imbriques dans un carre plus grand.}
+\end{figure}
+
+    \item \begin{verbatim}for (<initialisation>; <condition>; <mise à jour>){
+<bloc d'instructions>}\end{verbatim}
+    \begin{figure}[H]
+    \includegraphics[width=1\linewidth]{assets/code/for1_dpp.png}
+    \caption{\centering Exemple d'utilisation de la boucle for pour dessiner une serie de carres.}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{assets/render/for.png}
+    \caption{\centering Rendu graphique illustrant la liste de carres dessines à l'aide de la boucle for.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=1\linewidth]{assets/code/for2_dpp.png}
+\caption{\centering Exemple d'utilisation de la boucle for pour dessiner une croix, où chaque iteration contribue à former les lignes de la croix}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\linewidth]{assets/render/for2.png}
+    \caption{\centering Rendu graphique montrant la croix creee par la boucle for, avec deux lignes perpendiculaires dessinees au centre.}
+\end{figure}
+
 \end{itemize}
 
 \section{Manipulation du Curseur}
-Le curseur est l'objet central pour dessiner. Il est défini avec la syntaxe suivante :
+Le curseur est l'objet central pour dessiner. Il est defini avec la syntaxe suivante :
 \begin{lstlisting}[language=Draw++]
 cursor <identifiant> = create_cursor(<x>, <y>);
 \end{lstlisting}
-Les propriétés et méthodes principales du curseur incluent :
+Les proprietes et methodes principales du curseur incluent :
 \begin{itemize}
-    \item \texttt{cursor.move(distance)} : Déplace le curseur.
+    \item \texttt{cursor.move(distance)} : Deplace le curseur.
     \item \texttt{cursor.rotate(angle)} : Tourne le curseur.
-    \item \texttt{cursor.color(<couleur>)} : Définit la couleur.
-    \item \texttt{cursor.thickness(<valeur>)} : Définit l'épaisseur du trait.
-    \item \texttt{cursor.visible()} : Contrôle la visibilité du curseur.
+    \item \texttt{cursor.color(<couleur>)} : Definit la couleur.
+    \item \texttt{cursor.thickness(<valeur>)} : Definit l'epaisseur du trait.
+    \item \texttt{cursor.visible()} : Contrôle la visibilite du curseur.
 \end{itemize}
-Exemple de création et utilisation du curseur :
+
+\newpage
+Exemple de creation et utilisation du curseur :
 \begin{lstlisting}[language=Draw++]
 cursor c = create_cursor(0, 0);
 c.color(RED);
@@ -258,7 +212,7 @@ c.move(50);
 \end{lstlisting}
 
 \section{Dessiner des Formes}
-Les formes peuvent être dessinées avec les méthodes du curseur :
+Les formes peuvent être dessinees avec les methodes du curseur :
 \begin{itemize}
     \item \texttt{cursor.draw\_line(longueur)} : Dessine une ligne.
     \item \texttt{cursor.draw\_rectangle(largeur, hauteur, rempli)} : Dessine un rectangle.
@@ -280,11 +234,11 @@ c.draw_circle(30, false);
 \end{lstlisting}
 
 \section{Couleurs et Styles}
-Le curseur peut être personnalisé avec des couleurs prédéfinies ou des couleurs personnalisées. Exemple :
+Le curseur peut être personnalise avec des couleurs predefinies ou des couleurs personnalisees. Exemple :
 \begin{lstlisting}[language=Draw++]
 c.color(RED);
-c.thickness(3);  // Définit l'épaisseur du trait
-c.color(rgb(255, 0, 0));  // Rouge personnalisé
+c.thickness(3);  // Definit l'epaisseur du trait
+c.color(rgb(255, 0, 0));  // Rouge personnalise
 \end{lstlisting}
 
 
@@ -292,29 +246,29 @@ c.color(rgb(255, 0, 0));  // Rouge personnalisé
 \chapter{Description du traducteur}
 
 \section{Architecture du traducteur}
-Le traducteur de Draw++ est un système qui convertit le code source écrit dans le langage Draw++ en code C intermédiaire, prêt à être compilé. Ce processus de traduction s'effectue en plusieurs étapes clés, chacune ayant pour but de transformer le code dans un format plus proche de l'exécution.
+Le traducteur de Draw++ est un système qui convertit le code source ecrit dans le langage Draw++ en code C intermediaire, prêt à être compile. Ce processus de traduction s'effectue en plusieurs etapes cles, chacune ayant pour but de transformer le code dans un format plus proche de l'execution.
 
 \begin{enumerate}
-    \item \textbf{Analyse lexicale} : Dans cette phase, le code source est décomposé en tokens, qui sont les plus petites unités syntaxiques. Par exemple, des mots-clés comme \texttt{cursor}, \texttt{var}, \texttt{if}, ainsi que les identifiants et les opérateurs, sont extraits du code source.
-    \item \textbf{Analyse syntaxique} : Une fois que les tokens ont été générés, le traducteur construit un arbre syntaxique abstrait (AST). Cet arbre représente la structure logique du programme, où chaque nœud correspond à une construction du langage (par exemple, une expression, une condition, ou une affectation).
-    \item \textbf{Analyse sémantique} : À ce stade, le traducteur vérifie la validité des types, la cohérence des variables, et l'intégrité du programme. Cette étape s'assure que les opérations sont effectuées sur des types compatibles (par exemple, éviter de tenter d'ajouter un entier à une chaîne de caractères).
-    \item \textbf{Génération de code} : Enfin, le traducteur génère le code C intermédiaire, qui est une version optimisée et exécutable de l'AST. Ce code est ensuite prêt à être compilé par un compilateur C classique.
+    \item \textbf{Analyse lexicale} : Dans cette phase, le code source est decompose en tokens, qui sont les plus petites unites syntaxiques. Par exemple, des mots-cles comme \texttt{cursor}, \texttt{var}, \texttt{if}, ainsi que les identifiants et les operateurs, sont extraits du code source.
+    \item \textbf{Analyse syntaxique} : Une fois que les tokens ont ete generes, le traducteur construit un arbre syntaxique abstrait (AST). Cet arbre represente la structure logique du programme, où chaque nœud correspond à une construction du langage (par exemple, une expression, une condition, ou une affectation).
+    \item \textbf{Analyse semantique} : À ce stade, le traducteur verifie la validite des types, la coherence des variables, et l'integrite du programme. Cette etape s'assure que les operations sont effectuees sur des types compatibles (par exemple, eviter de tenter d'ajouter un entier à une chaîne de caractères).
+    \item \textbf{Generation de code} : Enfin, le traducteur genère le code C intermediaire, qui est une version optimisee et executable de l'AST. Ce code est ensuite prêt à être compile par un compilateur C classique.
 \end{enumerate}
 
 \section{Processus de traduction}
-Prenons un exemple simple pour illustrer le processus de traduction, où un programme écrit en Draw++ est traduit en C intermédiaire.
+Prenons un exemple simple pour illustrer le processus de traduction, où un programme ecrit en Draw++ est traduit en C intermediaire.
 
 \subsection{Code Draw++}
-Le code suivant est écrit en Draw++ pour créer un curseur et dessiner un rectangle (qui peut également être utilisé pour représenter un carré si les côtés sont égaux) :
+Le code suivant est ecrit en Draw++ pour creer un curseur et dessiner un rectangle (qui peut egalement être utilise pour representer un carre si les côtes sont egaux) :
 
 \begin{lstlisting}[language=Draw++]
 cursor c = create_cursor(0, 0);
 c.draw_rectangle(50, 50, false);
 \end{lstlisting}
 
-Le programme commence par déclarer un curseur \texttt{c} en appelant la fonction \texttt{create\_cursor} avec les coordonnées (0, 0). Ensuite, la méthode \texttt{draw\_rectangle} est utilisée pour dessiner un rectangle de 50 unités de largeur et 50 unités de hauteur. Le paramètre \texttt{false} indique que le rectangle ne doit pas être rempli.
+Le programme commence par declarer un curseur \texttt{c} en appelant la fonction \texttt{create\_cursor} avec les coordonnees (0, 0). Ensuite, la methode \texttt{draw\_rectangle} est utilisee pour dessiner un rectangle de 50 unites de largeur et 50 unites de hauteur. Le paramètre \texttt{false} indique que le rectangle ne doit pas être rempli.
 
-\subsection{Code C généré}
+\subsection{Code C genere}
 Le traducteur convertit ce code Draw++ en code C, qui pourrait ressembler à ce qui suit :
 
 \begin{lstlisting}[language=Draw++]
@@ -325,155 +279,167 @@ Cursor* c = createCursor(0.0, 0.0);
 drawRectangle(c, 50.0, 50.0, false);
 \end{lstlisting}
 
-Dans cette étape de la traduction :
+Dans cette etape de la traduction :
 \begin{itemize}
-    \item La fonction \texttt{create\_cursor(0, 0)} en Draw++ est traduite en \texttt{createCursor(0.0, 0.0)} en C. Les coordonnées sont converties en types \texttt{float} pour maintenir la cohérence avec la représentation C des positions en coordonnées flottantes.
-    \item La méthode \texttt{c.draw\_rectangle(50, 50, false)} devient un appel de fonction \texttt{drawRectangle(c, 50.0, 50.0, false)} en C. Le curseur \texttt{c} est passé comme un pointeur (\texttt{Cursor*}), et les dimensions du rectangle sont converties en \texttt{float} pour correspondre à la signature de la fonction générée.
-\end{itemize}
-\chapter{Bibliothèque graphique SDL2}
-
-\section{Introduction à SDL2}
-La SDL2 (Simple DirectMedia Layer 2) est une bibliothèque multimédia libre écrite en C qui a été utilisée comme base pour l'implémentation graphique de Draw++. Cette bibliothèque offre une couche d'abstraction pour l'accès au matériel informatique, particulièrement adaptée pour le développement d'applications graphiques et de jeux vidéo.
-
-\section{Utilisation dans Draw++}
-Dans le cadre du projet Draw++, SDL2 a été principalement utilisée pour implémenter les fonctionnalités graphiques suivantes :
-
-\subsection{Gestion de la fenêtre}
-SDL2 nous permet de créer et gérer la fenêtre de rendu avec les fonctions suivantes :
-\begin{itemize}
-    \item \texttt{SDL\_CreateWindow} : Création de la fenêtre d'affichage
-    \item \texttt{SDL\_CreateRenderer} : Initialisation du moteur de rendu
-    \item \texttt{SDL\_RenderPresent} : Mise à jour de l'affichage
+    \item La fonction \texttt{create\_cursor(0, 0)} en Draw++ est traduite en \texttt{createCursor(0.0, 0.0)} en C. Les coordonnees sont converties en types \texttt{float} pour maintenir la coherence avec la representation C des positions en coordonnees flottantes.
+    \item La methode \texttt{c.draw\_rectangle(50, 50, false)} devient un appel de fonction \texttt{drawRectangle(c, 50.0, 50.0, false)} en C. Le curseur \texttt{c} est passe comme un pointeur (\texttt{Cursor*}), et les dimensions du rectangle sont converties en \texttt{float} pour correspondre à la signature de la fonction generee.
 \end{itemize}
 
-\subsection{Gestion des couleurs}
-La bibliothèque offre des fonctionnalités complètes pour la gestion des couleurs :
-\begin{itemize}
-    \item \texttt{SDL\_SetRenderDrawColor} : Définition de la couleur de dessin
-    \item Support des couleurs RGB avec canal alpha pour la transparence
-    \item Gestion des couleurs prédéfinies (BLACK, WHITE, RED, GREEN, BLUE)
-\end{itemize}
+\chapter{Bibliothèque graphique Draw++ (DPP)}
 
-\section{Implémentation des fonctionnalités graphiques}
+\section{Introduction à Draw++}
+Draw++ (DPP) est une bibliothèque graphique conçue pour offrir une interface intuitive et performante pour le dessin graphique. Construit sur la base de SDL2, DPP enrichit les fonctionnalites de cette dernière en integrant des abstractions et outils adaptes à la manipulation graphique. Cette bibliothèque vise à reduire la complexite de l’utilisation directe de SDL2 tout en permettant une creativite sans limite.
 
-\subsection{Système de curseur}
-Le curseur virtuel de Draw++ est implémenté en utilisant les coordonnées SDL2 :
-\begin{itemize}
-    \item Position stockée en coordonnées x, y
-    \item Orientation gérée en degrés
-    \item Déplacement relatif calculé via des transformations trigonométriques
-\end{itemize}
+\section{Fonctionnalites principales de Draw++}
+La bibliothèque Draw++ offre des fonctionnalites avancees pour simplifier et enrichir le processus de creation graphique. Voici une presentation detaillee de ses principales capacites.
 
-\subsection{Formes géométriques}
-Avec la bibliothèque SDL2, il est possible de dessiner une variété de formes géométriques. Voici quelques exemples :\\
+\subsection{Gestion des Curseurs}
+Le concept central de DPP repose sur l’utilisation des curseurs. Ces entites permettent de simplifier le positionnement et la gestion graphique.
 
 \begin{itemize}
-    \item \textbf{Lignes} \small : Utilisez la fonction \texttt{SDL\_RenderDrawLine} pour dessiner des lignes entre deux points spécifiés.
-    \begin{lstlisting}[language=C]
-    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-    \end{lstlisting}
-    \newline.
-    \item \textbf{Rectangles} \small : Les rectangles peuvent être dessinés avec les fonctions\\ \texttt{SDL\_RenderDrawRect} pour des rectangles vides et \texttt{SDL\_RenderFillRect} pour des rectangles pleins.
-    \begin{lstlisting}[language=C]
-    SDL_RenderDrawRect(renderer, &rect);  // Rectangle vide
-    SDL_RenderFillRect(renderer, &rect);  // Rectangle plein
-    \end{lstlisting}
-    \newline.
-    \item \textbf{Cercles et Ellipses} \small : Bien que SDL2 ne fournisse pas de fonction spécifique pour dessiner des cercles ou des ellipses, ces formes peuvent être tracées en utilisant des algorithmes qui calculent les points sur le périmètre de la forme. Il est ainsi possible de dessiner des cercles ou des ellipses pleins ou seulement leurs contours.\\
-    \item \textbf{Triangles} \small : Les triangles peuvent être créés en reliant trois points à l’aide de la fonction \texttt{SDL\_RenderDrawLine}.\\
+    \item \textbf{Creation de curseurs} : Creez plusieurs curseurs avec \texttt{create\_cursor()} pour une manipulation flexible.
+    \item \textbf{Operations intuitives} : Deplacement \texttt{move\_cursor()}, rotation \texttt{rotate\_cursor()}, et contrôle de la visibilite.
+    \item \textbf{Personnalisation} : Changez la couleur (\texttt{set\_cursor\_color}) et l’epaisseur des traces (\texttt{set\_cursor\_thickness}).
 \end{itemize}
 
-En utilisant ces primitives de dessin, vous pouvez facilement créer des formes géométriques adaptées à vos besoins dans des applications graphiques.
+\paragraph{Exemple :}
+\begin{lstlisting}[language=C]
+Cursor* c = create_cursor(100, 100); // Creation d'un curseur
+set_cursor_color(c, red);            // Couleur rouge
+move_cursor(c, 50);                 // Deplacement de 50 pixels
+rotate_cursor(c, 90);               // Rotation de 90 degres
+cursor_draw_line(c, 100);           // Dessin d'une ligne
+\end{lstlisting}
 
+\subsection{Dessin de Formes Geometriques}
+Draw++ permet de dessiner des formes geometriques en simplifiant les calculs complexes.
 
-
-
-
-
-
-
-
-\section{Avantages de SDL2}
-L'utilisation de SDL2 dans Draw++ présente plusieurs avantages :
 \begin{itemize}
-    \item \textbf{Portabilité} : SDL2 fonctionne sur de nombreuses plateformes (Windows, Linux, MacOS)
-    \item \textbf{Performance} : Accès direct aux fonctionnalités graphiques matérielles
-    \item \textbf{Simplicité} : API claire et bien documentée
-    \item \textbf{Légèreté} : Bibliothèque légère avec peu de dépendances
-    \item \textbf{Communauté active} : Ressources et support disponibles
+    \item \textbf{Lignes} : Tracez des lignes avec \texttt{cursor\_draw\_line()}.
+    \item \textbf{Rectangles et cercles} : Gerez les dimensions et remplissages avec \texttt{cursor\_draw\_rectangle()} et \texttt{cursor\_draw\_circle()}.
+    \item \textbf{Ellipses et triangles} : Creez des formes avancees avec \texttt{cursor\_draw\_ellipse()} et \texttt{cursor\_draw\_triangle()}.
 \end{itemize}
+
+\paragraph{Exemple :}
+\begin{lstlisting}[language=C]
+Cursor* c = create_cursor(200, 150);
+
+// Dessiner un rectangle rempli
+cursor_draw_rectangle(c, 200, 100, true);
+
+// Dessiner un cercle non rempli
+cursor_draw_circle(c, 50, false);
+
+// Dessiner une ellipse
+cursor_draw_ellipse(c, 120, 80, true);
+
+// Dessiner un triangle
+cursor_draw_triangle(c, 100, 50, false);
+\end{lstlisting}
+
+\subsection{Gestion des Couleurs}
+La gestion des couleurs est intuitive avec DPP.
+
+\begin{itemize}
+    \item \textbf{Couleurs predefinies} : Utilisez \texttt{red}, \texttt{green}, \texttt{blue}, etc.
+    \item \textbf{Couleurs personnalisees} : Creez des couleurs avec \texttt{custom\_color()}.
+    \item \textbf{Attributs dynamiques} : Modifiez facilement les couleurs et styles des formes dessinees.
+\end{itemize}
+
+\paragraph{Exemple :}
+\begin{lstlisting}[language=C]
+// Creer une couleur personnalisee
+SDL_Color myColor = custom_color(128, 0, 128, 255); // Violet opaque
+
+// Appliquer la couleur au curseur
+set_cursor_color(c, myColor);
+\end{lstlisting}
+
+\section{Avantages de Draw++}
+Draw++ se distingue par plusieurs atouts majeurs :
+
+\begin{itemize}
+    \item \textbf{Facilite d'utilisation} : Une interface claire pour acceder aux outils graphiques sans complexite.
+    \item \textbf{Flexibilite} : Une conception modulaire permettant d'ajouter facilement des fonctionnalites.
+    \item \textbf{Support et documentation} : Une documentation complète et des exemples pour guider les developpeurs.
+\end{itemize}
+
+\section{Conclusion}
+Draw++ offre une solution puissante et intuitive pour la programmation graphique, reduisant la complexite de SDL2 tout en apportant des outils specialises et adaptes à divers projets. Que ce soit pour un usage educatif ou professionnel, DPP simplifie le developpement tout en augmentant la creativite des utilisateurs.
+
+
 
 
 
 \chapter{Gestion des erreurs}
 
-La gestion des erreurs dans Draw++ repose sur une architecture modulaire qui couvre l'intégralité du pipeline de compilation : lexicale, syntaxique et sémantique. Chaque étape identifie des erreurs spécifiques et propose des solutions adaptées pour aider l'utilisateur à corriger son code rapidement et efficacement.
+La gestion des erreurs dans Draw++ repose sur une architecture modulaire qui couvre l'integralite du pipeline de compilation : lexicale, syntaxique et semantique. Chaque etape identifie des erreurs specifiques et propose des solutions adaptees pour aider l'utilisateur à corriger son code rapidement et efficacement.
 
-\section{Types d'erreurs et traitements associés}
+\section{Types d'erreurs et traitements associes}
 
 \begin{itemize}
-    \item \textbf{Erreurs lexicales :} Détectées lors de la conversion du code en tokens.
+    \item \textbf{Erreurs lexicales :} Detectees lors de la conversion du code en tokens.
     \begin{itemize}
-        \item \textit{Caractères invalides :} Présence de symboles non reconnus dans le langage.
+        \item \textit{Caractères invalides :} Presence de symboles non reconnus dans le langage.
         \begin{itemize}
             \item \textbf{Traitement :} Proposer de supprimer ou remplacer les caractères non valides.
         \end{itemize}
-        \item \textit{Chaînes non terminées :} Oubli d'un guillemet fermant.
+        \item \textit{Chaînes non terminees :} Oubli d'un guillemet fermant.
         \begin{itemize}
-            \item \textbf{Traitement :} Suggérer d'ajouter le guillemet manquant (\texttt{"}).\\
+            \item \textbf{Traitement :} Suggerer d'ajouter le guillemet manquant (\texttt{"}).\\
         \end{itemize}
     \end{itemize}
 
     \item \textbf{Erreurs syntaxiques :} Surviennent lors de l'analyse de la structure logique du code.
     \begin{itemize}
-        \item \textit{Jetons inattendus :} Utilisation incorrecte de symboles ou d'instructions (exemple : \texttt{)} non appariée).
+        \item \textit{Jetons inattendus :} Utilisation incorrecte de symboles ou d'instructions (exemple : \texttt{)} non appariee).
         \begin{itemize}
-            \item \textbf{Traitement :} Vérifier les parenthèses, accolades et points-virgules.
+            \item \textbf{Traitement :} Verifier les parenthèses, accolades et points-virgules.
         \end{itemize}
-        \item \textit{Types ou constructions attendus :} Absence d'un type ou mot-clé attendu.
+        \item \textit{Types ou constructions attendus :} Absence d'un type ou mot-cle attendu.
         \begin{itemize}
             \item \textbf{Traitement :} Proposer des exemples valides, comme \texttt{var int myVar = 0;}
         \end{itemize}
         \item \textit{Terminaison manquante :} Oubli d'un point-virgule à la fin d'une instruction.
         \begin{itemize}
-            \item \textbf{Traitement :} Indiquer la ligne concernée et suggérer d'ajouter un \texttt{;}.\\
+            \item \textbf{Traitement :} Indiquer la ligne concernee et suggerer d'ajouter un \texttt{;}.\\
         \end{itemize}
     \end{itemize}
 
-    \item \textbf{Erreurs sémantiques :} Vérifient la validité logique et le sens du code.
+    \item \textbf{Erreurs semantiques :} Verifient la validite logique et le sens du code.
     \begin{itemize}
-        \item \textit{Variables non déclarées :} Utilisation d'une variable sans déclaration préalable.
+        \item \textit{Variables non declarees :} Utilisation d'une variable sans declaration prealable.
         \begin{itemize}
-            \item \textbf{Traitement :} Fournir des exemples de déclaration pour corriger l'erreur.
+            \item \textbf{Traitement :} Fournir des exemples de declaration pour corriger l'erreur.
         \end{itemize}
         \item \textit{Conflits de type :} Tentative d'assigner des types incompatibles.
         \begin{itemize}
-            \item \textbf{Traitement :} Suggérer de convertir les types ou d'utiliser des types compatibles.
+            \item \textbf{Traitement :} Suggerer de convertir les types ou d'utiliser des types compatibles.
         \end{itemize}
-        \item \textit{Variables déjà déclarées :} Réutilisation d'un identifiant existant.
+        \item \textit{Variables dejà declarees :} Reutilisation d'un identifiant existant.
         \begin{itemize}
-            \item \textbf{Traitement :} Proposer un nouveau nom ou la suppression de la déclaration redondante.
+            \item \textbf{Traitement :} Proposer un nouveau nom ou la suppression de la declaration redondante.
         \end{itemize}
-        \item \textit{Utilisation incorrecte des curseurs :} Méthode appelée sur un objet non initialisé ou non valide.
+        \item \textit{Utilisation incorrecte des curseurs :} Methode appelee sur un objet non initialise ou non valide.
         \begin{itemize}
             \item \textbf{Traitement :} Fournir un exemple d'initialisation correcte.\\
         \end{itemize}
     \end{itemize}
 
-    \item \textbf{Erreurs spécifiques aux curseurs :} Ces erreurs sont propres au fonctionnement graphique de Draw++.
+    \item \textbf{Erreurs specifiques aux curseurs :} Ces erreurs sont propres au fonctionnement graphique de Draw++.
     \begin{itemize}
-        \item \textit{Méthode invalide :} Appel d'une méthode inexistante pour un curseur.
+        \item \textit{Methode invalide :} Appel d'une methode inexistante pour un curseur.
         \begin{itemize}
-            \item \textbf{Traitement :} Lister les méthodes valides comme \texttt{move(distance)} ou \texttt{rotate(angle)}.
+            \item \textbf{Traitement :} Lister les methodes valides comme \texttt{move(distance)} ou \texttt{rotate(angle)}.
         \end{itemize}
-        \item \textit{Propriétés incompatibles :} Essayer d'utiliser une couleur ou une épaisseur invalide.
+        \item \textit{Proprietes incompatibles :} Essayer d'utiliser une couleur ou une epaisseur invalide.
         \begin{itemize}
             \item \textbf{Traitement :} Fournir des exemples valides, comme \texttt{cursor.color(RED);}.
         \end{itemize}
     \end{itemize}
 \end{itemize}
 
-\section{Exemple d'intégration}
+\section{Exemple d'integration}
 
 Un exemple typique de correction automatique :
 \begin{lstlisting}[language=draw++]
@@ -482,25 +448,25 @@ cursor c = create_cursor(0, 0);
 c.move(100);
 \end{lstlisting}
 
-Erreur détectée : \textit{"Expected TokenType.SEMICOLON at line 1"} \\
+Erreur detectee : \textit{"Expected TokenType.SEMICOLON at line 1"} \\
 \textbf{Suggestions :}
 \begin{itemize}
     \item Ajouter un point-virgule après \texttt{var int x = 10;}.
 \end{itemize}
 
-\chapter{Interface de Développement Intégré (IDE)}
+\chapter{Interface de Developpement Integre (IDE)}
 
 \section{Vue d'ensemble}
-L'IDE Draw++ propose un environnement de développement complet spécialement conçu pour le langage Draw++. L'interface se divise en trois zones principales :
+L'IDE Draw++ propose un environnement de developpement complet specialement conçu pour le langage Draw++. L'interface se divise en trois zones principales :
 \begin{itemize}
-    \item Un éditeur de code avec numérotation des lignes
-    \item Une zone de prévisualisation graphique
-    \item Un terminal intégré
+    \item Un editeur de code avec numerotation des lignes
+    \item Une zone de previsualisation graphique
+    \item Un terminal integre
 \end{itemize}
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\linewidth]{image.png}
-    \caption{Interface de Développement Intégré Draw++.}
+    \includegraphics[width=0.9\linewidth]{assets/ide/image.png}
+    \caption{Interface de Developpement Integre Draw++.}
     \label{fig:enter-label}
 \end{figure}
 
@@ -511,36 +477,36 @@ La barre de menu en haut de l'interface offre plusieurs options essentielles :
 \begin{itemize}
     \item \textbf{File} : Gestion des fichiers
     \begin{itemize}
-        \item New : Créer un nouveau fichier
+        \item New : Creer un nouveau fichier
         \item Open : Ouvrir un fichier existant
         \item Save : Sauvegarder le fichier courant
         \item Download Image : Exporter le rendu graphique
         \item Close Tab : Fermer l'onglet actif
         \item Exit : Quitter l'application
     \end{itemize}
-    \item \textbf{Run} : Exécution du code
+    \item \textbf{Run} : Execution du code
     \item \textbf{Help} : Accès à l'aide
 \end{itemize}
 
-\subsection{Éditeur de code}
-L'éditeur intègre plusieurs fonctionnalités avancées :
+\subsection{editeur de code}
+L'editeur intègre plusieurs fonctionnalites avancees :
 \begin{itemize}
-    \item Numérotation automatique des lignes
+    \item Numerotation automatique des lignes
     \item Coloration syntaxique pour le langage Draw++
-    \item Mise en évidence des erreurs
+    \item Mise en evidence des erreurs
     \item Support pour les commentaires (// et /* */)
 \end{itemize}
 
-\subsection{Zone de prévisualisation}
-La zone de prévisualisation offre les caractéristiques suivantes :
+\subsection{Zone de previsualisation}
+La zone de previsualisation offre les caracteristiques suivantes :
 \begin{itemize}
     \item Affichage du rendu graphique
-    \item Mise à jour lors de l'exécution du code
+    \item Mise à jour lors de l'execution du code
     \item Zone redimensionnable
-    \item Aperçu fidèle des dimensions spécifiées par \texttt{windowWidth} et \texttt{windowHeight}
+    \item Aperçu fidèle des dimensions specifiees par \texttt{windowWidth} et \texttt{windowHeight}
 \end{itemize}
 \newpage
-\subsection{Terminal intégré}
+\subsection{Terminal integre}
 Le terminal propose plusieurs commandes essentielles :
 \begin{lstlisting}[style=customStyle]
 clear  - Efface l'ecran
@@ -553,116 +519,116 @@ save   - Sauvegarde le code source, les tokens ou l'AST
 \end{lstlisting}
 
 
-\section{Fonctionnalités d'analyse et débogage}
+\section{Fonctionnalites d'analyse et debogage}
 
 \subsection{Analyse lexicale}
-Le terminal affiche les informations détaillées pour chaque token généré :
+Le terminal affiche les informations detaillees pour chaque token genere :
 \begin{itemize}
     \item Type du token
     \item Valeur
-    \item Numéro de ligne
+    \item Numero de ligne
     \item Position dans la ligne
 \end{itemize}
 
 Un exemple de sortie d'analyse lexicale :
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{terminal.png}
+    \includegraphics[width=0.7\linewidth]{assets/terminal/terminal.png}
     \label{fig:enter-label}
 \end{figure}
 
 \subsection{Retours d'erreur}
-L'IDE fournit des messages d'erreur détaillés pour différents types d'erreurs :
+L'IDE fournit des messages d'erreur detailles pour differents types d'erreurs :
 \begin{itemize}
     \item Erreurs de syntaxe
     \item Erreurs lexicales
-    \item Erreurs sémantiques
+    \item Erreurs semantiques
     \item Problèmes de compilation
 \end{itemize}
 
-\subsection{Vérification en temps réel}
-L'IDE effectue plusieurs vérifications pendant la saisie :
+\subsection{Verification en temps reel}
+L'IDE effectue plusieurs verifications pendant la saisie :
 \begin{itemize}
     \item Validation des variables obligatoires (\texttt{windowWidth}, \texttt{windowHeight})
-    \item Vérification de la syntaxe
-    \item Détection des erreurs de type
-    \item Validation des appels de méthodes sur les curseurs
+    \item Verification de la syntaxe
+    \item Detection des erreurs de type
+    \item Validation des appels de methodes sur les curseurs
 \end{itemize}
 
 \section{Bonnes pratiques d'utilisation}
 
 \subsection{Initialisation du projet}
-Pour démarrer un nouveau projet efficacement :
+Pour demarrer un nouveau projet efficacement :
 \begin{itemize}
-    \item Toujours commencer par définir \texttt{windowWidth} et \texttt{windowHeight}
+    \item Toujours commencer par definir \texttt{windowWidth} et \texttt{windowHeight}
     \item Organiser le code avec des commentaires descriptifs
-    \item Sauvegarder régulièrement le travail
+    \item Sauvegarder regulièrement le travail
 \end{itemize}
 
-\subsection{Débogage}
-Pour un débogage efficace :
+\subsection{Debogage}
+Pour un debogage efficace :
 \begin{itemize}
-    \item Utiliser la commande \texttt{lex} pour vérifier l'analyse lexicale
+    \item Utiliser la commande \texttt{lex} pour verifier l'analyse lexicale
     \item Employer la commande \texttt{parse} pour valider la structure du code
-    \item Consulter le terminal pour les messages d'erreur détaillés
+    \item Consulter le terminal pour les messages d'erreur detailles
 \end{itemize}
 
 
-\chapter{Exemples d'exécution}
+\chapter{Exemples d'execution}
 
-Dans cette section, nous présentons plusieurs exemples d'exécution utilisant le langage Draw++. Chaque exemple inclut le rendu graphique généré et la sortie du terminal.
+Dans cette section, nous presentons plusieurs exemples d'execution utilisant le langage Draw++. Chaque exemple inclut le rendu graphique genere et la sortie du terminal.
 
 \section{Exemple 1 : Dessin d'un cercle}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{draw_circle.png}
+    \includegraphics[width=0.45\textwidth]{assets/render/draw_circle.png}
     \caption{Rendu graphique du cercle.}
-    \includegraphics[width=0.9\textwidth]{draw_circle_dpp.png}
+    \includegraphics[width=0.9\textwidth]{assets/code/draw_circle_dpp.png}
     \caption{Code DPP pour dessiner un cercle.}
 \end{figure}
 
 \section{Exemple 2 : Dessin d'un triangle}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{draw_triangle.png}
+    \includegraphics[width=0.45\textwidth]{assets/render/draw_triangle.png}
     \caption{Rendu graphique du triangle.}
-    \includegraphics[width=0.9\textwidth]{draw_triangle_dpp.png}
+    \includegraphics[width=0.9\textwidth]{assets/code/draw_triangle_dpp.png}
     \caption{Code DPP pour dessiner un triangle.}
 \end{figure}
 
 \section{Exemple 3 : Dessin du drapeau de la France}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{france.png}
+    \includegraphics[width=0.45\textwidth]{assets/render/france.png}
     \caption{Rendu graphique du drapeau de la France.}
-    \includegraphics[width=0.8\textwidth]{france_dpp}
+    \includegraphics[width=0.8\textwidth]{assets/code/france_dpp}
     \caption{Code DPP pour dessiner le drapeau de la France.}
 \end{figure}
 
 \section{Exemple 4 : Dessin d'une ligne}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{draw_line.png}
+    \includegraphics[width=0.45\textwidth]{assets/render/draw_line.png}
     \caption{Rendu graphique de la ligne.}
-    \includegraphics[width=0.8\textwidth]{draw_line_dpp.png}
+    \includegraphics[width=0.8\textwidth]{assets/code/draw_line_dpp.png}
     \caption{Code DPP pour dessiner une ligne.}
 \end{figure}
 
 \section{Exemple 5 : Dessin d'un rectangle}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{draw_rectangle.png}
+    \includegraphics[width=0.7\textwidth]{assets/render/draw_rectangle.png}
     \caption{Rendu graphique du rectangle.}
-    \includegraphics[width=1\textwidth]{draw_rectangle_dpp.png}
+    \includegraphics[width=1\textwidth]{assets/code/draw_rectangle_dpp.png}
     \caption{Code DPP pour dessiner un rectangle.}
 \end{figure}
 
 \section{Exemple 6 : Dessin d'une ellipse}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{draw_ellipse.png}
+    \includegraphics[width=0.45\textwidth]{assets/render/draw_ellipse.png}
     \caption{Rendu graphique de l'ellipse.}
-    \includegraphics[width=0.8\textwidth]{draw_ellipse_dpp.png}
+    \includegraphics[width=0.8\textwidth]{assets/code/draw_ellipse_dpp.png}
     \caption{Code DPP pour dessiner une ellipse.}
 \end{figure}
 
@@ -671,15 +637,11 @@ Dans cette section, nous présentons plusieurs exemples d'exécution utilisant l
 \section{Sortie du terminal}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{terminal_output_after_run.png}
+    \includegraphics[width=1\textwidth]{assets/terminal/terminal_output_after_run.png}
 \end{figure}
 
  \chapter{Conclusion}
 
-Le projet Draw++ a permis la conception d'un langage graphique minimaliste, couplé à un traducteur robuste, capable de transformer des instructions simples en formes visuelles. Le traducteur, conçu avec une attention particulière à la gestion des erreurs et à l’analyse syntaxique, garantit une exécution fluide et précise du code. La structure du langage, combinée à des outils de manipulation des formes, offre une plateforme puissante pour explorer l'interaction entre programmation et visualisation graphique.
-
-
-
-
+Le projet Draw++ a permis la conception d'un langage graphique minimaliste, couple à un traducteur robuste, capable de transformer des instructions simples en formes visuelles. Le traducteur, conçu avec une attention particulière à la gestion des erreurs et à l’analyse syntaxique, garantit une execution fluide et precise du code. La structure du langage, combinee à des outils de manipulation des formes, offre une plateforme puissante pour explorer l'interaction entre programmation et visualisation graphique.
 
 \end{document}
