@@ -88,9 +88,9 @@ class CodeGenerator:
         """
         Generates the C code with a single final render pass, captures the image, then quits.
         """
-        self.visible_cursors = []  # Liste des curseurs visibles à dessiner après les formes
+        self.visible_cursors = []  # visible cursors to be drawn after shapes
 
-        # 1) Inclusions
+        # 1) inclusions
         for header in self.config["headers"]:
             self.write_line(header)
         self.write_line()
@@ -108,23 +108,23 @@ class CodeGenerator:
         self.write_line("}")
         self.write_line()
 
-        # 3) Visiter les noeuds
+        # 3) nodes visit
         for stmt in ast.statements:
             self.visit(stmt)
 
-        # 4) Dessiner les curseurs visibles après les formes
+        # 4) draw visible cursors
         if self.visible_cursors:
             self.write_line("// Dessiner les curseurs visibles après les formes")
             for cursor_name in self.visible_cursors:
                 self.write_line(f"set_cursor_visibility({cursor_name}, true);")
 
-        # 5) Render une fois
-        self.write_line('SDL_Delay(100);')  # Nécessaire pour éviter des bugs de rendu
+        # 5) render SDL image
+        self.write_line('SDL_Delay(130);')  # required to fix some render bugs
         self.write_line('printf("Presenting renderer...\\n");')
         self.write_line("SDL_RenderPresent(renderer);")
         self.write_line()
 
-        # 6) Capture et sauvegarde
+        # 6) capture image and save it
         self.write_line('printf("Saving output image...\\n");')
         self.write_line("SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(")
         self.indent_level += 1
