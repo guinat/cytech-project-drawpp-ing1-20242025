@@ -7,7 +7,7 @@ from ide.utils.file_manager import save_file, file_paths
 from ide.terminal.terminal import DrawTerminal
 
 # when you open a new tab, this is the default code
-initial_content = 'var int windowHeight = 500;\nvar int windowWidth = 500;'
+initial_content = ''
 
 class ErrorHighlighter:
     """
